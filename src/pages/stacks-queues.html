@@ -1,0 +1,563 @@
+<article class="view" id="stacks-queues" hidden>
+  <header class="page-head">
+    <p class="eyebrow"><span class="tag">Q23 · 8 marks</span> infix → postfix is a sure-shot question</p>
+    <h1>Stacks and queues</h1>
+    <p class="lede">Two simple rules run half of computing. A <b>stack</b> serves the newest item first (LIFO). A <b>queue</b> serves the oldest item first (FIFO). Then we use a stack to check brackets and to convert expressions, the most predictable question in the paper.</p>
+    <div class="snapshot">
+      <h2>Exam snapshot: what they ask</h2>
+      <ul>
+        <li><span class="m">8M</span><span>Stack: operations, array implementation, overflow/underflow, applications. <a href="#ans-stack">Model answer</a></span></li>
+        <li><span class="m">8M</span><span>Queue, drawback of a linear queue, circular queue with example. <a href="#ans-queue-cq">Model answer</a></span></li>
+        <li><span class="m">8M</span><span>Check balanced parentheses using a stack. <a href="#ans-paren">Model answer</a></span></li>
+        <li><span class="m">8M</span><span>Convert infix to postfix (with table). Evaluate postfix. <a href="#ans-infix">Model answer</a></span></li>
+        <li><span class="m">15M</span><span>Stacks and queues in full, with applications. <a href="#ans-l-stackq">Model answer</a></span></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- ============ Stack ============ -->
+  <section class="lesson" id="stack" data-title="Stack">
+    <div class="lesson-head"><p class="eyebrow">Part 1</p><h2>Stack: Last In, First Out</h2></div>
+    <p class="idea">A stack is a linear data structure where insertion and deletion happen at <mark>one end only, called the top</mark>. Last In, First Out (<mark>LIFO</mark>).</p>
+    <div class="callout analogy"><p>A <b>stack of plates</b> in the canteen. You put a clean plate on top, and you take a plate from the top. The plate you put last is the first one taken. You never pull a plate from the middle.</p></div>
+    <h3>Operations</h3>
+    <div class="table-wrap"><table class="t compact">
+      <thead><tr><th>Operation</th><th>What it does</th><th>Time</th></tr></thead>
+      <tbody>
+        <tr><td><b>push(x)</b></td><td>Put x on top</td><td class="mono">O(1)</td></tr>
+        <tr><td><b>pop()</b></td><td>Remove and return the top item</td><td class="mono">O(1)</td></tr>
+        <tr><td><b>peek()</b> / top()</td><td>Look at the top item without removing it</td><td class="mono">O(1)</td></tr>
+        <tr><td><b>isEmpty()</b></td><td>True when top == −1</td><td class="mono">O(1)</td></tr>
+        <tr><td><b>isFull()</b></td><td>True when top == MAX − 1 (array version)</td><td class="mono">O(1)</td></tr>
+      </tbody>
+    </table></div>
+    <div data-viz="stack-play"></div>
+    <h3>Array implementation</h3>
+    <p>Use an array <code>stack[MAX]</code> and a variable <b>top</b> that holds the index of the top item. An empty stack has <b>top = −1</b>.</p>
+    <div class="grid-2">
+      <div class="algo"><div class="algo-head">PUSH(x)</div><ol>
+        <li>If top == MAX − 1: print “Stack Overflow”, stop.</li>
+        <li>top = top + 1.</li>
+        <li>stack[top] = x.</li></ol></div>
+      <div class="algo"><div class="algo-head">POP()</div><ol>
+        <li>If top == −1: print “Stack Underflow”, stop.</li>
+        <li>x = stack[top].</li>
+        <li>top = top − 1.</li>
+        <li>Return x.</li></ol></div>
+    </div>
+    <div class="grid-2">
+      <div class="callout key" data-t="Overflow"><p>Trying to <b>push</b> into a <b>full</b> stack. Condition: <code>top == MAX − 1</code>.</p></div>
+      <div class="callout key" data-t="Underflow"><p>Trying to <b>pop</b> from an <b>empty</b> stack. Condition: <code>top == −1</code>.</p></div>
+    </div>
+    <h3>Linked list implementation</h3>
+    <p>Push = <b>insert at beginning</b>, pop = <b>delete from beginning</b> of a singly linked list (Q22). The head pointer acts as top. Both are O(1), and the stack never overflows until the computer runs out of memory.</p>
+    <h3>Applications of stacks</h3>
+    <ul class="two-col-list">
+      <li>Function calls and recursion (the call stack)</li>
+      <li>Undo in editors</li>
+      <li>Browser back button</li>
+      <li>Balanced parentheses checking</li>
+      <li>Infix to postfix/prefix conversion</li>
+      <li>Evaluating postfix expressions</li>
+      <li>Reversing a word or a list</li>
+      <li>Backtracking (maze, DFS in Q25)</li>
+    </ul>
+    <div class="code-tabs" data-title="Stack using an array">
+<script type="text/plain" data-lang="c">
+#include <stdio.h>
+#define MAX 5
+int stack[MAX], top = -1;          //? top = -1 means empty.
+
+void push(int x) {
+    if (top == MAX - 1) { printf("Stack Overflow\n"); return; }
+    stack[++top] = x;              //? Increase top first, then store.
+}
+
+int pop() {
+    if (top == -1) { printf("Stack Underflow\n"); return -1; }
+    return stack[top--];           //? Return the top value, then decrease top.
+}
+
+int peek() { return top == -1 ? -1 : stack[top]; }
+
+void display() {
+    for (int i = top; i >= 0; i--) printf("%d\n", stack[i]);   //? Print from top to bottom.
+}
+
+int main() {
+    push(10); push(20); push(30);
+    printf("Popped %d\n", pop());  // 30
+    printf("Top is %d\n", peek()); // 20
+    display();
+    return 0;
+}
+</script>
+<script type="text/plain" data-lang="java">
+class Stack {
+    int[] a = new int[5];
+    int top = -1;
+
+    void push(int x) {
+        if (top == a.length - 1) { System.out.println("Stack Overflow"); return; }
+        a[++top] = x;
+    }
+    int pop() {
+        if (top == -1) { System.out.println("Stack Underflow"); return -1; }
+        return a[top--];
+    }
+    int peek() { return top == -1 ? -1 : a[top]; }
+    boolean isEmpty() { return top == -1; }
+
+    public static void main(String[] args) {
+        Stack s = new Stack();
+        s.push(10); s.push(20); s.push(30);
+        System.out.println(s.pop());   // 30
+        System.out.println(s.peek());  // 20
+    }
+}
+</script>
+<script type="text/plain" data-lang="python">
+MAX = 5
+stack = []                 #? A Python list works as a stack: append = push, pop = pop.
+
+def push(x):
+    if len(stack) == MAX:
+        print("Stack Overflow")
+    else:
+        stack.append(x)
+
+def pop():
+    if not stack:
+        print("Stack Underflow")
+        return None
+    return stack.pop()
+
+def peek():
+    return stack[-1] if stack else None
+
+push(10); push(20); push(30)
+print(pop())   # 30
+print(peek())  # 20
+</script>
+    </div>
+    <div data-answer-ref="ans-stack"></div>
+    <div data-quiz="stack"></div>
+  </section>
+
+  <!-- ============ Queue ============ -->
+  <section class="lesson" id="queue" data-title="Queue">
+    <div class="lesson-head"><p class="eyebrow">Part 2</p><h2>Queue: First In, First Out</h2></div>
+    <p class="idea">A queue inserts at one end (the <mark>rear</mark>) and deletes from the other end (the <mark>front</mark>). First In, First Out (<mark>FIFO</mark>).</p>
+    <div class="callout analogy"><p>The <b>canteen line</b>. New people join at the back (rear). The person at the front is served and leaves. Whoever came first is served first. No cutting in.</p></div>
+    <div class="table-wrap"><table class="t compact">
+      <thead><tr><th>Operation</th><th>What it does</th><th>Condition to check</th></tr></thead>
+      <tbody>
+        <tr><td><b>enqueue(x)</b></td><td>Add x at the rear</td><td>Overflow if rear == MAX − 1</td></tr>
+        <tr><td><b>dequeue()</b></td><td>Remove the item at the front</td><td>Underflow if front == −1 or front &gt; rear</td></tr>
+        <tr><td><b>peek()</b></td><td>Look at the front item</td><td>Queue must not be empty</td></tr>
+      </tbody>
+    </table></div>
+    <div class="grid-2">
+      <div class="algo"><div class="algo-head">ENQUEUE(x), linear</div><ol>
+        <li>If rear == MAX − 1: “Queue Overflow”, stop.</li>
+        <li>If front == −1: front = 0.</li>
+        <li>rear = rear + 1; queue[rear] = x.</li></ol></div>
+      <div class="algo"><div class="algo-head">DEQUEUE(), linear</div><ol>
+        <li>If front == −1 or front &gt; rear: “Queue Underflow”, stop.</li>
+        <li>x = queue[front].</li>
+        <li>front = front + 1. Return x.</li></ol></div>
+    </div>
+    <h3>The big drawback of a linear queue</h3>
+    <p>Once rear reaches the end of the array, the queue says “full” even if you have already dequeued items and the slots at the front are empty. Those slots are <b>wasted</b> forever. Try it: enqueue 5 items, dequeue 2, then enqueue again.</p>
+    <div data-viz="queue-play" data-mode="linear"></div>
+    <h3>Applications of queues</h3>
+    <ul class="two-col-list">
+      <li>Printer job queue (print spooler)</li>
+      <li>CPU scheduling (first come, first served)</li>
+      <li>Breadth-first search in graphs (Q25)</li>
+      <li>Call-centre and ticket-counter waiting lines</li>
+      <li>Keyboard buffer</li>
+      <li>Sending data packets over a network</li>
+    </ul>
+    <div data-quiz="queue"></div>
+  </section>
+
+  <!-- ============ Circular queue ============ -->
+  <section class="lesson" id="circular-queue" data-title="Circular queue">
+    <div class="lesson-head"><p class="eyebrow">Part 3</p><h2>Circular queue</h2></div>
+    <p class="idea">In a circular queue, the last position is connected back to the first, so <mark>rear wraps around</mark> and reuses the empty slots at the front.</p>
+    <div class="callout analogy"><p>A <b>round table</b> with 5 chairs. When the last chair is taken, the next guest sits in chair 0 if it has been freed. The trick that makes this work in an array is the <b>modulo</b> operator: <code>(rear + 1) % SIZE</code> goes 0, 1, 2, 3, 4, 0, 1, …</p></div>
+    <div class="grid-2">
+      <div class="callout key" data-t="Full"><p><code>(rear + 1) % SIZE == front</code></p></div>
+      <div class="callout key" data-t="Empty"><p><code>front == −1</code></p></div>
+    </div>
+    <div class="grid-2">
+      <div class="algo"><div class="algo-head">ENQUEUE(x)</div><ol>
+        <li>If (rear + 1) % SIZE == front: “Queue Overflow”, stop.</li>
+        <li>If front == −1: front = rear = 0.</li>
+        <li>Else: rear = (rear + 1) % SIZE.</li>
+        <li>queue[rear] = x.</li></ol></div>
+      <div class="algo"><div class="algo-head">DEQUEUE()</div><ol>
+        <li>If front == −1: “Queue Underflow”, stop.</li>
+        <li>x = queue[front].</li>
+        <li>If front == rear (only one item): front = rear = −1.</li>
+        <li>Else: front = (front + 1) % SIZE.</li>
+        <li>Return x.</li></ol></div>
+    </div>
+    <div data-viz="queue-play" data-mode="circular"></div>
+    <h3>Worked trace (SIZE = 5)</h3>
+    <p>Write a table like this in the exam. Watch rear wrap from 4 to 0.</p>
+    <div data-trace="cqueue" data-size="5" data-ops="E10 E20 E30 E40 E50 E60 D D E60 E70 E80 D"></div>
+    <div class="table-wrap"><table class="t compact">
+      <thead><tr><th>Linear queue</th><th>Circular queue</th></tr></thead>
+      <tbody>
+        <tr><td>Rear only moves forward</td><td>Rear wraps around with % SIZE</td></tr>
+        <tr><td>Freed front slots are wasted</td><td>Freed slots are reused</td></tr>
+        <tr><td>Full when rear == MAX − 1</td><td>Full when (rear + 1) % SIZE == front</td></tr>
+      </tbody>
+    </table></div>
+    <p><b>Two relatives you may be asked to define:</b> a <b>deque</b> (double-ended queue) allows insert and delete at <em>both</em> ends; a <b>priority queue</b> serves the item with the highest priority first, not the oldest.</p>
+    <div class="code-tabs" data-title="Circular queue using an array">
+<script type="text/plain" data-lang="c">
+#include <stdio.h>
+#define SIZE 5
+int q[SIZE], front = -1, rear = -1;
+
+void enqueue(int x) {
+    if ((rear + 1) % SIZE == front) { printf("Queue Overflow\n"); return; }   //? Full test.
+    if (front == -1) front = rear = 0;                                        //? First item.
+    else rear = (rear + 1) % SIZE;                                            //? Wrap around.
+    q[rear] = x;
+}
+
+int dequeue() {
+    if (front == -1) { printf("Queue Underflow\n"); return -1; }
+    int x = q[front];
+    if (front == rear) front = rear = -1;     //? Removed the last item: empty again.
+    else front = (front + 1) % SIZE;
+    return x;
+}
+
+void display() {
+    if (front == -1) { printf("Empty\n"); return; }
+    int i = front;
+    while (1) {
+        printf("%d ", q[i]);
+        if (i == rear) break;
+        i = (i + 1) % SIZE;
+    }
+    printf("\n");
+}
+
+int main() {
+    enqueue(10); enqueue(20); enqueue(30); enqueue(40); enqueue(50);
+    dequeue(); dequeue();
+    enqueue(60);        // goes to index 0: wrap-around!
+    display();          // 30 40 50 60
+    return 0;
+}
+</script>
+<script type="text/plain" data-lang="java">
+class CircularQueue {
+    int[] q = new int[5];
+    int front = -1, rear = -1, SIZE = 5;
+
+    void enqueue(int x) {
+        if ((rear + 1) % SIZE == front) { System.out.println("Queue Overflow"); return; }
+        if (front == -1) front = rear = 0;
+        else rear = (rear + 1) % SIZE;
+        q[rear] = x;
+    }
+
+    int dequeue() {
+        if (front == -1) { System.out.println("Queue Underflow"); return -1; }
+        int x = q[front];
+        if (front == rear) front = rear = -1;
+        else front = (front + 1) % SIZE;
+        return x;
+    }
+}
+</script>
+<script type="text/plain" data-lang="python">
+SIZE = 5
+q = [None] * SIZE
+front = rear = -1
+
+def enqueue(x):
+    global front, rear
+    if (rear + 1) % SIZE == front:
+        return print("Queue Overflow")
+    if front == -1:
+        front = rear = 0
+    else:
+        rear = (rear + 1) % SIZE
+    q[rear] = x
+
+def dequeue():
+    global front, rear
+    if front == -1:
+        return print("Queue Underflow")
+    x = q[front]
+    if front == rear:
+        front = rear = -1
+    else:
+        front = (front + 1) % SIZE
+    return x
+</script>
+    </div>
+    <div data-answer-ref="ans-queue-cq"></div>
+    <div data-quiz="cqueue"></div>
+  </section>
+
+  <!-- ============ Parentheses ============ -->
+  <section class="lesson" id="parentheses" data-title="Balanced parentheses">
+    <div class="lesson-head"><p class="eyebrow">Part 4</p><h2>Balanced parentheses using a stack</h2></div>
+    <p class="idea">An expression is balanced when every opening bracket has a <mark>matching closing bracket of the same type</mark>, in the right order.</p>
+    <div class="callout analogy"><p>Russian nesting dolls. The last doll you opened must be the first one you close. That “last opened, first closed” rule is exactly LIFO, so a stack is the perfect tool.</p></div>
+    <div class="algo"><div class="algo-head">Algorithm</div><ol>
+      <li>Create an empty stack.</li>
+      <li>Scan the expression from left to right, one character at a time.</li>
+      <li>If it is an opening bracket <code>( [ {</code>: <b>push</b> it.</li>
+      <li>If it is a closing bracket <code>) ] }</code>: if the stack is empty → <b>not balanced</b>. Otherwise pop; if the popped bracket is not the matching type → <b>not balanced</b>.</li>
+      <li>Ignore every other character.</li>
+      <li>At the end: if the stack is empty → <b>balanced</b>, otherwise → <b>not balanced</b>.</li>
+    </ol></div>
+    <div data-viz="brackets-play"></div>
+    <h3>Traces to copy into your answer</h3>
+    <div class="grid-2">
+      <div data-trace="brackets" data-input="{[()]}"></div>
+      <div data-trace="brackets" data-input="([)]"></div>
+    </div>
+    <p>There are three ways to fail, and a full answer mentions all three: a <b>wrong type</b> (<code>([)]</code>), an <b>extra closing</b> bracket (<code>a+b)</code>), and an <b>unclosed</b> bracket left on the stack (<code>((a+b)</code>).</p>
+    <div class="code-tabs" data-title="Balanced parentheses">
+<script type="text/plain" data-lang="c">
+#include <stdio.h>
+#include <string.h>
+char st[100]; int top = -1;
+
+int match(char open, char close) {
+    return (open == '(' && close == ')') || (open == '[' && close == ']') || (open == '{' && close == '}');
+}
+
+int isBalanced(char *e) {
+    for (int i = 0; e[i] != '\0'; i++) {
+        char c = e[i];
+        if (c == '(' || c == '[' || c == '{') st[++top] = c;           //? Opening: push.
+        else if (c == ')' || c == ']' || c == '}') {
+            if (top == -1 || !match(st[top--], c)) return 0;           //? Empty or wrong type: fail.
+        }
+    }
+    return top == -1;                                                  //? Leftovers mean unclosed.
+}
+
+int main() {
+    printf("%d\n", isBalanced("{[()]}"));   // 1
+    printf("%d\n", isBalanced("([)]"));     // 0
+    return 0;
+}
+</script>
+<script type="text/plain" data-lang="java">
+import java.util.ArrayDeque;
+import java.util.Deque;
+
+class Brackets {
+    static boolean isBalanced(String e) {
+        Deque<Character> st = new ArrayDeque<>();
+        for (char c : e.toCharArray()) {
+            if ("([{".indexOf(c) >= 0) st.push(c);
+            else if (")]}".indexOf(c) >= 0) {
+                if (st.isEmpty()) return false;
+                char o = st.pop();
+                if ("([{".indexOf(o) != ")]}".indexOf(c)) return false;
+            }
+        }
+        return st.isEmpty();
+    }
+    public static void main(String[] a) {
+        System.out.println(isBalanced("{[()]}"));  // true
+        System.out.println(isBalanced("([)]"));    // false
+    }
+}
+</script>
+<script type="text/plain" data-lang="python">
+def is_balanced(expr):
+    pairs = {')': '(', ']': '[', '}': '{'}
+    stack = []
+    for c in expr:
+        if c in '([{':
+            stack.append(c)
+        elif c in ')]}':
+            if not stack or stack.pop() != pairs[c]:
+                return False
+    return not stack
+
+print(is_balanced("{[()]}"))  # True
+print(is_balanced("([)]"))    # False
+</script>
+    </div>
+    <div data-answer-ref="ans-paren"></div>
+    <div data-quiz="paren"></div>
+  </section>
+
+  <!-- ============ Infix to postfix ============ -->
+  <section class="lesson" id="infix-postfix" data-title="Infix → postfix">
+    <div class="lesson-head"><p class="eyebrow">Part 5</p><h2>Infix to postfix conversion</h2></div>
+    <p class="idea">Postfix puts each operator <mark>after its two operands</mark>, so the computer never needs brackets or precedence rules to evaluate it.</p>
+    <div class="table-wrap"><table class="t compact">
+      <thead><tr><th>Notation</th><th>Operator position</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td><b>Infix</b></td><td>Between operands (how we write)</td><td class="mono">A + B</td></tr>
+        <tr><td><b>Prefix</b> (Polish)</td><td>Before operands</td><td class="mono">+ A B</td></tr>
+        <tr><td><b>Postfix</b> (Reverse Polish)</td><td>After operands</td><td class="mono">A B +</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout analogy"><p>An old calculator that wants numbers first, then the button: “5, 3, plus”. Postfix is that order. Because the operator always comes after what it works on, there is never any confusion about what to do first.</p></div>
+    <h3>Precedence and associativity</h3>
+    <div class="table-wrap"><table class="t compact">
+      <thead><tr><th>Operator</th><th>Precedence</th><th>Associativity</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">^</td><td>Highest (3)</td><td><b>Right to left</b>: A^B^C = A^(B^C)</td></tr>
+        <tr><td class="mono">* / %</td><td>Middle (2)</td><td>Left to right</td></tr>
+        <tr><td class="mono">+ −</td><td>Lowest (1)</td><td>Left to right</td></tr>
+      </tbody>
+    </table></div>
+    <div class="algo"><div class="algo-head">Algorithm: infix → postfix using a stack</div><ol>
+      <li>Scan the infix expression from <b>left to right</b>.</li>
+      <li>If the symbol is an <b>operand</b> (A, B, 5…): write it to the postfix output.</li>
+      <li>If it is <b>(</b>: push it.</li>
+      <li>If it is <b>)</b>: pop and output everything until <b>(</b>, then throw both brackets away.</li>
+      <li>If it is an <b>operator</b>: while the top of the stack is an operator with <b>higher</b> precedence, or <b>equal</b> precedence and the incoming operator is left-associative, pop it to the output. Then push the incoming operator.</li>
+      <li>At the end, pop everything left on the stack to the output.</li>
+    </ol></div>
+    <div class="callout mnemonic"><p><b>“Operands walk straight through, operators wait on the stack.”</b> An operator is only allowed to sit on top of a <em>weaker</em> operator. If a stronger (or equal) one is on top, kick it out to the output first. Exception: <code>^</code> can sit on another <code>^</code>.</p></div>
+    <div data-viz="infix-play"></div>
+    <h3>Worked examples</h3>
+    <details class="more" open><summary>Example 1: A + B * C</summary><div class="more-body"><div data-trace="infix" data-input="A+B*C"></div></div></details>
+    <details class="more"><summary>Example 2: (A + B) * (C − D)</summary><div class="more-body"><div data-trace="infix" data-input="(A+B)*(C-D)"></div></div></details>
+    <details class="more"><summary>Example 3 (classic exam question): A + B * (C ^ D − E) ^ (F + G * H) − I</summary><div class="more-body"><div data-trace="infix" data-input="A+B*(C^D-E)^(F+G*H)-I"></div></div></details>
+    <h3>Infix to prefix (the reverse trick)</h3>
+    <p>Reverse the infix (swap <code>(</code> and <code>)</code>), convert to postfix, reverse the answer.</p>
+    <div data-trace="prefix" data-input="(A-B/C)*(A/K-L)"></div>
+    <div class="callout trap"><p>Two common slips: popping <code>^</code> when another <code>^</code> arrives (it is right-associative, so <b>push</b>), and forgetting to empty the stack at the end. Also, brackets <b>never</b> appear in a postfix answer.</p></div>
+    <div class="code-tabs" data-title="Infix to postfix">
+<script type="text/plain" data-lang="c">
+#include <stdio.h>
+#include <ctype.h>
+char st[100]; int top = -1;
+
+int prec(char c) {
+    if (c == '^') return 3;
+    if (c == '*' || c == '/' || c == '%') return 2;
+    if (c == '+' || c == '-') return 1;
+    return 0;                                   //? '(' has the lowest priority on the stack.
+}
+
+void infixToPostfix(char *in, char *out) {
+    int k = 0;
+    for (int i = 0; in[i]; i++) {
+        char c = in[i];
+        if (isalnum(c)) out[k++] = c;                       //? Operand: straight to output.
+        else if (c == '(') st[++top] = c;
+        else if (c == ')') {
+            while (top != -1 && st[top] != '(') out[k++] = st[top--];
+            top--;                                          //? Discard '('.
+        } else {
+            while (top != -1 && (prec(st[top]) > prec(c) ||
+                   (prec(st[top]) == prec(c) && c != '^')))  //? Equal precedence pops, except for ^.
+                out[k++] = st[top--];
+            st[++top] = c;
+        }
+    }
+    while (top != -1) out[k++] = st[top--];                 //? Empty the stack.
+    out[k] = '\0';
+}
+
+int main() {
+    char out[100];
+    infixToPostfix("A+B*(C^D-E)^(F+G*H)-I", out);
+    printf("%s\n", out);    // ABCD^E-FGH*+^*+I-
+    return 0;
+}
+</script>
+<script type="text/plain" data-lang="java">
+import java.util.ArrayDeque;
+import java.util.Deque;
+
+class InfixToPostfix {
+    static int prec(char c) {
+        switch (c) { case '^': return 3; case '*': case '/': case '%': return 2; case '+': case '-': return 1; }
+        return 0;
+    }
+    static String convert(String in) {
+        StringBuilder out = new StringBuilder();
+        Deque<Character> st = new ArrayDeque<>();
+        for (char c : in.toCharArray()) {
+            if (Character.isLetterOrDigit(c)) out.append(c);
+            else if (c == '(') st.push(c);
+            else if (c == ')') { while (st.peek() != '(') out.append(st.pop()); st.pop(); }
+            else {
+                while (!st.isEmpty() && (prec(st.peek()) > prec(c) || (prec(st.peek()) == prec(c) && c != '^')))
+                    out.append(st.pop());
+                st.push(c);
+            }
+        }
+        while (!st.isEmpty()) out.append(st.pop());
+        return out.toString();
+    }
+    public static void main(String[] a) {
+        System.out.println(convert("A+B*(C^D-E)^(F+G*H)-I"));  // ABCD^E-FGH*+^*+I-
+    }
+}
+</script>
+<script type="text/plain" data-lang="python">
+PREC = {'^': 3, '*': 2, '/': 2, '%': 2, '+': 1, '-': 1}
+
+def infix_to_postfix(expr):
+    out, stack = [], []
+    for c in expr:
+        if c.isalnum():
+            out.append(c)
+        elif c == '(':
+            stack.append(c)
+        elif c == ')':
+            while stack[-1] != '(':
+                out.append(stack.pop())
+            stack.pop()
+        else:
+            while stack and stack[-1] != '(' and (
+                PREC[stack[-1]] > PREC[c] or (PREC[stack[-1]] == PREC[c] and c != '^')):
+                out.append(stack.pop())
+            stack.append(c)
+    while stack:
+        out.append(stack.pop())
+    return ''.join(out)
+
+print(infix_to_postfix("A+B*(C^D-E)^(F+G*H)-I"))  # ABCD^E-FGH*+^*+I-
+</script>
+    </div>
+    <div data-answer-ref="ans-infix"></div>
+    <div data-quiz="infix"></div>
+  </section>
+
+  <!-- ============ Postfix evaluation ============ -->
+  <section class="lesson" id="postfix-eval" data-title="Evaluate postfix">
+    <div class="lesson-head"><p class="eyebrow">Part 6</p><h2>Evaluating a postfix expression</h2></div>
+    <p class="idea">Push numbers. When an operator comes, <mark>pop two, compute, push the result</mark>.</p>
+    <div class="algo"><div class="algo-head">Algorithm</div><ol>
+      <li>Scan the postfix expression left to right.</li>
+      <li>Operand → push it.</li>
+      <li>Operator → pop <b>B</b> (the top), then pop <b>A</b>. Compute <b>A op B</b> and push the result.</li>
+      <li>At the end, the single value on the stack is the answer.</li>
+    </ol></div>
+    <div class="callout trap"><p>The order matters for − and /. The <b>first</b> value you pop is the <b>right</b> operand. For <code>8 2 −</code>: pop 2 (B), pop 8 (A), compute 8 − 2 = 6, not 2 − 8.</p></div>
+    <div data-viz="eval-play"></div>
+    <div data-trace="postfix-eval" data-input="5 3 + 8 2 - *"></div>
+    <div data-quiz="eval"></div>
+  </section>
+
+  <section class="stack" aria-labelledby="h-q23-end">
+    <h2 id="h-q23-end">Q23 unit challenge</h2>
+    <div data-quiz-unit="q23" data-count="8" data-title="Q23 unit challenge"></div>
+    <p>For a 15-mark question, read <a href="#ans-l-stackq">Stacks and queues in full (15M)</a>.</p>
+  </section>
+</article>

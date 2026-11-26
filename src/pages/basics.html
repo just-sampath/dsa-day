@@ -1,0 +1,373 @@
+<article class="view" id="basics" hidden>
+  <header class="page-head">
+    <p class="eyebrow"><span class="tag">Q21 · 8 marks</span> also inside 15M questions</p>
+    <h1>Basics: structures, memory and Big-O</h1>
+    <p class="lede">The foundation unit. You’ll learn what a data structure is, how C groups data with <b>structures</b>, how a program borrows memory while it runs (<b>malloc / free</b>), and how we measure an algorithm’s speed (<b>Big-O</b>).</p>
+    <div class="snapshot">
+      <h2>Exam snapshot: what they ask</h2>
+      <ul>
+        <li><span class="m">8M</span><span>Define data structure and classify it. <a href="#ans-ds">Model answer</a></span></li>
+        <li><span class="m">8M</span><span>Explain structures: declaration, initialisation, accessing members, array of structures, pointer to structure. <a href="#ans-struct">Model answer</a></span></li>
+        <li><span class="m">8M</span><span>Explain malloc, calloc, realloc, free. Static vs dynamic allocation. <a href="#ans-dma">Model answer</a></span></li>
+        <li><span class="m">8M</span><span>Time &amp; space complexity, asymptotic notations O, Ω, Θ. <a href="#ans-complexity">Model answer</a></span></li>
+        <li><span class="m">15M</span><span>Store N student records using structures and dynamic memory. <a href="#ans-l-basics">Model answer</a></span></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- ============ 1. What is DSA ============ -->
+  <section class="lesson" id="ds-intro" data-title="What is a data structure?">
+    <div class="lesson-head"><p class="eyebrow">Part 1</p><h2>What is a data structure?</h2></div>
+    <p class="idea">A data structure is a way of <mark>organising data in memory</mark> so it can be used efficiently.</p>
+    <div class="callout analogy">
+      <p>Think of your wardrobe. You could throw every piece of clothing in one pile, and you’d still own the same clothes. But with shelves, hangers and drawers you find your jeans in two seconds. A <b>data structure</b> is the shelving for data. An <b>algorithm</b> is the step-by-step recipe you follow to use it (find, add, remove, sort).</p>
+    </div>
+    <p>Programs store marks, names, bus routes, friend lists. How you store them decides how fast you can <b>search</b>, <b>insert</b> and <b>delete</b>. That’s the whole subject: pick the right shelf for the job.</p>
+
+    <h3>Classification</h3>
+    <div class="table-wrap">
+      <table class="t">
+        <thead><tr><th>Type</th><th>Meaning</th><th>Examples</th></tr></thead>
+        <tbody>
+          <tr><td><b>Primitive</b></td><td>Basic types built into the language. Hold one value.</td><td>int, float, char, double</td></tr>
+          <tr><td><b>Non-primitive</b></td><td>Built from primitive types. Hold many values.</td><td>array, structure, list, stack, tree, graph</td></tr>
+          <tr><td>↳ <b>Linear</b></td><td>Elements form a sequence, one after another.</td><td>array, linked list, stack, queue</td></tr>
+          <tr><td>↳ <b>Non-linear</b></td><td>Elements branch out (hierarchy or network).</td><td>tree, graph</td></tr>
+          <tr><td><b>Static</b></td><td>Size fixed when the program is compiled.</td><td>array</td></tr>
+          <tr><td><b>Dynamic</b></td><td>Size can grow and shrink while running.</td><td>linked list, tree</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="fig">
+      <div class="fig-box" style="padding:16px">
+        <div class="formula" style="border-left-color:var(--mint)">Data Structures
+├── Primitive ── int, float, char, double
+└── Non-primitive
+    ├── Linear ── Array, Linked list, Stack, Queue
+    └── Non-linear ── Tree, Graph</div>
+      </div>
+      <p class="cap">Draw this tree in your answer. It is worth 2 marks on its own.</p>
+    </div>
+
+    <h3>Abstract Data Type (ADT)</h3>
+    <p>An <b>ADT</b> describes <em>what</em> a data structure does (its operations) without saying <em>how</em> it is built. For example, the <b>Stack ADT</b> promises push, pop, peek and isEmpty. You can build it with an array or with a linked list. The user doesn’t care which.</p>
+
+    <h3>Algorithm and its 5 properties</h3>
+    <p>An <b>algorithm</b> is a finite set of clear steps that solves a problem. Every algorithm must have:</p>
+    <ol class="steps">
+      <li><b>Input</b>: zero or more values given to it.</li>
+      <li><b>Output</b>: at least one result.</li>
+      <li><b>Definiteness</b>: every step is clear and unambiguous.</li>
+      <li><b>Finiteness</b>: it stops after a finite number of steps.</li>
+      <li><b>Effectiveness</b>: every step is basic enough to actually carry out.</li>
+    </ol>
+    <div class="callout mnemonic"><p><b>“I O D F E”</b>: <b>I</b>nput, <b>O</b>utput, <b>D</b>efiniteness, <b>F</b>initeness, <b>E</b>ffectiveness. Say it as “I Owe Dad Five Euros”.</p></div>
+    <p><b>Common operations</b> on any data structure: traversal (visit each element), insertion, deletion, searching, sorting, merging.</p>
+    <div data-answer-ref="ans-ds"></div>
+    <div data-quiz="ds"></div>
+  </section>
+
+  <!-- ============ 2. Structures ============ -->
+  <section class="lesson" id="structures" data-title="Structures">
+    <div class="lesson-head"><p class="eyebrow">Part 2</p><h2>Structures (struct)</h2></div>
+    <p class="idea">A structure groups <mark>different types of data under one name</mark>.</p>
+    <div class="callout analogy">
+      <p>Your college ID card has your <b>roll number</b> (a number), your <b>name</b> (text) and your <b>CGPA</b> (a decimal). They are different kinds of data, but they all describe <em>one student</em>. A structure is that ID card: one name, many fields.</p>
+    </div>
+    <p>An <b>array</b> can only hold items of the <em>same</em> type (50 marks, all int). A <b>structure</b> can hold items of <em>different</em> types. Each item inside it is called a <b>member</b> (or field).</p>
+
+    <h3>1. Declaring a structure</h3>
+    <p>This is the one place in the syllabus where you must write a little C syntax, so here it is, line by line. Tap the dotted lines for an explanation.</p>
+    <script type="text/plain" data-code="c" data-title="Declaration: the blueprint">
+struct student {        //? "struct" says we are making a new type. "student" is its name (the tag).
+    int roll;           //? Member 1: a whole number.
+    char name[20];      //? Member 2: up to 19 letters of text.
+    float marks;        //? Member 3: a decimal number.
+};                      //? The semicolon after } is compulsory. Forgetting it is a classic mistake.
+</script>
+    <p>The declaration is only a <b>blueprint</b>: no memory is used yet, just like a blank form design. Memory is reserved when you create a <b>variable</b>:</p>
+    <script type="text/plain" data-code="c" data-title="Variables and initialisation">
+struct student s1;                              //? Creates one real student, s1, in memory.
+struct student s2 = {101, "Asha", 88.5};        //? Creates s2 and fills its members in order.
+</script>
+
+    <h3>2. Accessing members: the dot operator</h3>
+    <script type="text/plain" data-code="c" data-title="Dot operator">
+s1.roll = 102;                    //? variable.member — read it as "s1's roll".
+strcpy(s1.name, "Ravi");          //? Text is copied with strcpy, not with =.
+s1.marks = 76.0;
+printf("%d %s %.1f", s1.roll, s1.name, s1.marks);
+</script>
+
+    <h3>3. Array of structures</h3>
+    <p>For a whole class you don’t make 60 separate variables. You make an <b>array of structures</b>: <code>struct student cls[60];</code> Then <code>cls[0].roll</code> is the first student’s roll number, <code>cls[1].name</code> the second student’s name, and so on.</p>
+
+    <h3>4. Pointer to a structure: the arrow operator</h3>
+    <p>A <b>pointer</b> is a variable that stores an <em>address</em> (where something lives in memory). When you have a pointer to a structure, you reach its members with the <b>arrow</b> <code>-&gt;</code> instead of the dot.</p>
+    <script type="text/plain" data-code="c" data-title="Arrow operator">
+struct student *p = &s1;     //? p stores the address of s1 (& means "address of").
+p->marks = 90.0;             //? Same as (*p).marks = 90.0. Arrow = "go to the address, then pick the member".
+</script>
+    <div class="callout mnemonic"><p><b>Dot for the thing, arrow for the pointer.</b> <code>s1.marks</code> when you hold the structure itself, <code>p-&gt;marks</code> when you hold its address. Linked lists use <code>-&gt;</code> everywhere, so this matters for Q22 too.</p></div>
+
+    <h3>5. Nested structures and typedef</h3>
+    <ul>
+      <li><b>Nested structure</b>: a structure inside another. A <code>student</code> can contain a <code>struct date dob;</code> and you reach it with <code>s1.dob.year</code>.</li>
+      <li><b>typedef</b> gives a type a short nickname: <code>typedef struct student Student;</code> lets you write <code>Student s1;</code> instead of <code>struct student s1;</code>.</li>
+    </ul>
+
+    <div data-viz="struct-builder"></div>
+
+    <h3>Structure vs array, structure vs union</h3>
+    <div class="grid-2">
+      <div class="table-wrap"><table class="t compact">
+        <thead><tr><th>Array</th><th>Structure</th></tr></thead>
+        <tbody>
+          <tr><td>Same type of elements</td><td>Different types of members</td></tr>
+          <tr><td>Accessed by index: <code>a[2]</code></td><td>Accessed by name: <code>s.marks</code></td></tr>
+          <tr><td>Built-in</td><td>User-defined type</td></tr>
+        </tbody>
+      </table></div>
+      <div class="table-wrap"><table class="t compact">
+        <thead><tr><th>Structure</th><th>Union</th></tr></thead>
+        <tbody>
+          <tr><td>Keyword <code>struct</code></td><td>Keyword <code>union</code></td></tr>
+          <tr><td>Each member has its own memory</td><td>All members share one memory block</td></tr>
+          <tr><td>Size = sum of member sizes</td><td>Size = size of the largest member</td></tr>
+          <tr><td>All members usable together</td><td>Only one member valid at a time</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="callout trap"><p>Students write “size of a structure = largest member”. That’s the <b>union</b>. A structure’s size is the <b>sum</b> of its members (and the compiler may add a few padding bytes).</p></div>
+    <div data-answer-ref="ans-struct"></div>
+    <div data-quiz="struct"></div>
+  </section>
+
+  <!-- ============ 3. DMA ============ -->
+  <section class="lesson" id="dma" data-title="Dynamic memory">
+    <div class="lesson-head"><p class="eyebrow">Part 3</p><h2>Dynamic memory allocation (DMA)</h2></div>
+    <p class="idea">Dynamic memory allocation means <mark>getting memory while the program is running</mark>, exactly as much as you need.</p>
+    <div class="callout analogy">
+      <p>A <b>static</b> array is like booking a hall for 100 guests months in advance: if 30 come, 70 chairs are wasted; if 120 come, you’re stuck. <b>Dynamic</b> allocation is like ordering chairs on the day of the party, once you know the exact headcount, and returning them afterwards.</p>
+    </div>
+
+    <h3>Static vs dynamic allocation</h3>
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Static allocation</th><th>Dynamic allocation</th></tr></thead>
+      <tbody>
+        <tr><td>Memory fixed at <b>compile time</b></td><td>Memory taken at <b>run time</b></td></tr>
+        <tr><td>Size can’t change: <code>int a[100];</code></td><td>Size can grow or shrink (realloc)</td></tr>
+        <tr><td>Stored on the <b>stack</b></td><td>Stored on the <b>heap</b></td></tr>
+        <tr><td>Freed automatically</td><td>You must free it with <code>free()</code></td></tr>
+        <tr><td>Can waste memory or run short</td><td>Uses exactly what is needed</td></tr>
+        <tr><td>Example: arrays</td><td>Example: linked lists, trees</td></tr>
+      </tbody>
+    </table></div>
+    <p>The four functions live in <code>&lt;stdlib.h&gt;</code>. Each one hands back a <b>pointer</b> (an address) to the memory it reserved, or <b>NULL</b> if there wasn’t enough.</p>
+
+    <div class="grid-2">
+      <div class="card">
+        <h4>malloc: “memory allocate”</h4>
+        <p class="formula">ptr = (int *) malloc(n * sizeof(int));</p>
+        <p class="muted">Reserves <b>one block</b> of n × 4 bytes. The values inside are <b>garbage</b> (random leftovers).</p>
+      </div>
+      <div class="card">
+        <h4>calloc: “contiguous allocate”</h4>
+        <p class="formula">ptr = (int *) calloc(n, sizeof(int));</p>
+        <p class="muted">Takes <b>two arguments</b> (how many, size of each) and sets every byte to <b>zero</b>.</p>
+      </div>
+      <div class="card">
+        <h4>realloc: “re-allocate”</h4>
+        <p class="formula">ptr = (int *) realloc(ptr, newSize);</p>
+        <p class="muted">Changes the size of a block you already have. Old values are kept.</p>
+      </div>
+      <div class="card">
+        <h4>free</h4>
+        <p class="formula">free(ptr);  ptr = NULL;</p>
+        <p class="muted">Gives the memory back to the heap. Setting the pointer to NULL afterwards is good practice.</p>
+      </div>
+    </div>
+    <div class="callout tip"><p><b>Reading the malloc line:</b> <code>sizeof(int)</code> asks “how many bytes is one int?” (4). Multiply by n to get the total. <code>(int *)</code> tells C to treat the block as ints. Then always check: <code>if (ptr == NULL) { printf("No memory"); }</code></p></div>
+
+    <h3>malloc vs calloc</h3>
+    <div class="table-wrap"><table class="t compact">
+      <thead><tr><th>malloc</th><th>calloc</th></tr></thead>
+      <tbody>
+        <tr><td>One argument: total bytes</td><td>Two arguments: count, size of each</td></tr>
+        <tr><td>Memory contains garbage</td><td>Memory is set to 0</td></tr>
+        <tr><td>Slightly faster</td><td>Slightly slower (it clears memory)</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Two classic bugs</h3>
+    <div class="grid-2">
+      <div class="callout trap" data-t="Memory leak"><p>You allocate memory but never free it, and then lose its address (for example, by pointing the pointer somewhere else). The memory stays reserved until the program ends.</p></div>
+      <div class="callout trap" data-t="Dangling pointer"><p>You free the memory but keep using the old pointer. It “dangles”, pointing at memory that isn’t yours. Fix: set it to NULL after <code>free</code>.</p></div>
+    </div>
+
+    <div data-viz="heap-sim"></div>
+
+    <h3>Example: marks of n students</h3>
+    <div class="algo">
+      <div class="algo-head">Algorithm in plain English</div>
+      <ol>
+        <li>Read n, the number of students.</li>
+        <li>Ask for memory for n integers using malloc. If it returns NULL, print “no memory” and stop.</li>
+        <li>Read the n marks into that memory.</li>
+        <li>Print them (or compute the average).</li>
+        <li>free the memory and set the pointer to NULL.</li>
+      </ol>
+    </div>
+    <div class="code-tabs" data-title="Program: marks of n students">
+<script type="text/plain" data-lang="c">
+#include <stdio.h>
+#include <stdlib.h>          //? malloc and free live here.
+
+int main() {
+    int n, i, *marks;
+    printf("How many students? ");
+    scanf("%d", &n);
+    marks = (int *) malloc(n * sizeof(int));   //? Reserve n integers on the heap.
+    if (marks == NULL) {                       //? Always check: malloc returns NULL when memory runs out.
+        printf("Memory not available\n");
+        return 1;
+    }
+    for (i = 0; i < n; i++) {
+        printf("Marks of student %d: ", i + 1);
+        scanf("%d", &marks[i]);                //? Use it exactly like an array.
+    }
+    for (i = 0; i < n; i++)
+        printf("%d ", marks[i]);
+    free(marks);                               //? Give the memory back.
+    marks = NULL;                              //? Avoid a dangling pointer.
+    return 0;
+}
+</script>
+<script type="text/plain" data-lang="java">
+import java.util.Scanner;
+
+public class Marks {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("How many students? ");
+        int n = sc.nextInt();
+        int[] marks = new int[n];        //? "new" allocates memory at run time, like malloc.
+        for (int i = 0; i < n; i++) {
+            System.out.print("Marks of student " + (i + 1) + ": ");
+            marks[i] = sc.nextInt();
+        }
+        for (int m : marks) System.out.print(m + " ");
+        // No free(): Java's garbage collector returns unused memory automatically.
+    }
+}
+</script>
+<script type="text/plain" data-lang="python">
+n = int(input("How many students? "))
+marks = []                         #? Python lists grow by themselves: memory is managed for you.
+for i in range(n):
+    marks.append(int(input(f"Marks of student {i + 1}: ")))
+print(*marks)
+# No free(): Python frees memory automatically when nothing uses it.
+</script>
+    </div>
+    <div data-answer-ref="ans-dma"></div>
+    <div data-quiz="dma"></div>
+  </section>
+
+  <!-- ============ 4. Complexity ============ -->
+  <section class="lesson" id="complexity" data-title="Time & space complexity">
+    <div class="lesson-head"><p class="eyebrow">Part 4</p><h2>Time and space complexity</h2></div>
+    <p class="idea">Complexity tells you <mark>how the work grows as the input grows</mark>.</p>
+    <div class="callout analogy">
+      <p>Finding a friend’s name in a class register: if you read every name from the top, 60 students means up to 60 checks, 600 means up to 600. The work grows <b>in step</b> with the size: that’s <b>O(n)</b>. If the register is sorted and you open it in the middle and keep halving, 600 names need only about 10 checks: that’s <b>O(log n)</b>.</p>
+    </div>
+    <ul>
+      <li><b>Time complexity</b>: how many basic steps an algorithm takes, as a function of the input size <b>n</b>. We count steps, not seconds, because seconds depend on the computer.</li>
+      <li><b>Space complexity</b>: how much extra memory it needs, as a function of n. Space = fixed part (code, simple variables) + variable part (arrays, recursion stack).</li>
+    </ul>
+
+    <h3>Best, average and worst case</h3>
+    <p>Take <b>linear search</b> in an array of n items:</p>
+    <div class="table-wrap"><table class="t compact">
+      <thead><tr><th>Case</th><th>When</th><th>Comparisons</th></tr></thead>
+      <tbody>
+        <tr><td><b>Best</b></td><td>The key is the first element</td><td>1 → O(1)</td></tr>
+        <tr><td><b>Average</b></td><td>The key is somewhere in the middle</td><td>about n/2 → O(n)</td></tr>
+        <tr><td><b>Worst</b></td><td>The key is last, or not present</td><td>n → O(n)</td></tr>
+      </tbody>
+    </table></div>
+    <p>We usually quote the <b>worst case</b>, because it’s a guarantee.</p>
+
+    <h3>Asymptotic notations</h3>
+    <p>“Asymptotic” means “what happens when n gets very large”. Three notations describe it:</p>
+    <div class="grid-3">
+      <div class="card"><h4>Big-O: O(g(n))</h4><p><b>Upper bound</b>, the worst case. f(n) = O(g(n)) if there are constants <b>c &gt; 0</b> and <b>n₀</b> such that <b>f(n) ≤ c·g(n)</b> for all n ≥ n₀.</p><p class="muted">“It will never be slower than this.”</p></div>
+      <div class="card"><h4>Omega: Ω(g(n))</h4><p><b>Lower bound</b>, the best case. f(n) = Ω(g(n)) if <b>f(n) ≥ c·g(n)</b> for all n ≥ n₀.</p><p class="muted">“It will never be faster than this.”</p></div>
+      <div class="card"><h4>Theta: Θ(g(n))</h4><p><b>Tight bound</b>, the exact growth. f(n) = Θ(g(n)) if <b>c₁·g(n) ≤ f(n) ≤ c₂·g(n)</b> for all n ≥ n₀.</p><p class="muted">“It grows exactly like this.”</p></div>
+    </div>
+    <figure class="fig">
+      <div class="fig-box" style="padding:10px">
+        <svg class="asy" viewBox="0 0 660 190" role="img" aria-label="Three graphs: Big-O with f below c·g after n0, Omega with f above c·g after n0, Theta with f between c1·g and c2·g">
+          <g transform="translate(10,10)">
+            <path class="asy-axis" d="M20 150 H200 M20 150 V10"/>
+            <path class="asy-g" d="M20 140 C 80 120, 140 60, 200 15"/>
+            <path class="asy-f" d="M20 110 C 60 100, 90 110, 120 95 S 170 70, 200 55"/>
+            <path class="asy-n0" d="M92 150 V20"/>
+            <text x="200" y="12" class="asy-t">c·g(n)</text><text x="200" y="66" class="asy-t">f(n)</text><text x="86" y="168" class="asy-t">n₀</text>
+            <text x="110" y="185" class="asy-h">Big-O: f ≤ c·g</text>
+          </g>
+          <g transform="translate(230,10)">
+            <path class="asy-axis" d="M20 150 H200 M20 150 V10"/>
+            <path class="asy-f" d="M20 120 C 70 110, 120 60, 200 12"/>
+            <path class="asy-g" d="M20 105 C 70 112, 130 105, 200 80"/>
+            <path class="asy-n0" d="M80 150 V20"/>
+            <text x="200" y="10" class="asy-t">f(n)</text><text x="200" y="92" class="asy-t">c·g(n)</text><text x="74" y="168" class="asy-t">n₀</text>
+            <text x="110" y="185" class="asy-h">Omega: f ≥ c·g</text>
+          </g>
+          <g transform="translate(450,10)">
+            <path class="asy-axis" d="M20 150 H200 M20 150 V10"/>
+            <path class="asy-g" d="M20 130 C 80 110, 140 50, 200 12"/>
+            <path class="asy-f" d="M20 100 C 60 118, 120 90, 200 50"/>
+            <path class="asy-g2" d="M20 145 C 90 140, 150 115, 200 90"/>
+            <path class="asy-n0" d="M70 150 V20"/>
+            <text x="200" y="10" class="asy-t">c₂·g</text><text x="200" y="52" class="asy-t">f(n)</text><text x="200" y="96" class="asy-t">c₁·g</text><text x="64" y="168" class="asy-t">n₀</text>
+            <text x="110" y="185" class="asy-h">Theta: sandwiched</text>
+          </g>
+        </svg>
+      </div>
+      <figcaption class="cap">Draw these three small graphs in your answer. After the point n₀, f(n) stays on the correct side of c·g(n).</figcaption>
+    </figure>
+
+    <h3>How to find the Big-O of any algorithm</h3>
+    <ol class="steps">
+      <li>Count how many times the <b>innermost</b> statement runs, in terms of n.</li>
+      <li>Keep only the <b>biggest term</b>: 3n² + 5n + 7 → n².</li>
+      <li><b>Drop constants</b>: 4n → n, n/2 → n.</li>
+      <li>Loops <b>one after another add</b> (n + n = O(n)). Loops <b>one inside another multiply</b> (n × n = O(n²)).</li>
+      <li>A loop that <b>halves or doubles</b> its counter runs log₂ n times → O(log n).</li>
+    </ol>
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Order</th><th>Name</th><th>Example</th><th>n = 1,000</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">O(1)</td><td>Constant</td><td>Access a[5], push/pop on a stack</td><td class="tnum">1</td></tr>
+        <tr><td class="mono">O(log n)</td><td>Logarithmic</td><td>Binary search, search in a balanced tree</td><td class="tnum">≈ 10</td></tr>
+        <tr><td class="mono">O(n)</td><td>Linear</td><td>Linear search, traversing a list</td><td class="tnum">1,000</td></tr>
+        <tr><td class="mono">O(n log n)</td><td>Linearithmic</td><td>Merge sort, heap sort</td><td class="tnum">≈ 10,000</td></tr>
+        <tr><td class="mono">O(n²)</td><td>Quadratic</td><td>Bubble sort, two nested loops</td><td class="tnum">1,000,000</td></tr>
+        <tr><td class="mono">O(2ⁿ)</td><td>Exponential</td><td>Trying every subset</td><td>astronomical</td></tr>
+      </tbody>
+    </table></div>
+    <p class="small muted">Order from fastest to slowest: <b>1 &lt; log n &lt; n &lt; n log n &lt; n² &lt; n³ &lt; 2ⁿ &lt; n!</b></p>
+    <div data-viz="growth"></div>
+    <div data-viz="cx-game"></div>
+    <div class="callout trap"><p>“O(2n)” is not a final answer. Constants are dropped: write <b>O(n)</b>. And don’t mix up the notations: Big-O is the <b>upper</b> bound, Omega the <b>lower</b> bound, Theta both.</p></div>
+    <div data-answer-ref="ans-complexity"></div>
+    <div data-quiz="complexity"></div>
+  </section>
+
+  <section class="stack" aria-labelledby="h-q21-end">
+    <h2 id="h-q21-end">Q21 unit challenge</h2>
+    <div data-quiz-unit="q21" data-count="8" data-title="Q21 unit challenge"></div>
+    <p>Ready for the long version? Read the <a href="#ans-l-basics">15-mark answer on structures + DMA</a>.</p>
+  </section>
+</article>

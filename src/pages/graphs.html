@@ -1,0 +1,271 @@
+<article class="view" id="graphs" hidden>
+  <header class="page-head">
+    <p class="eyebrow"><span class="tag">Q25 · 8 marks</span> BFS/DFS and Prim/Kruskal tables are guaranteed marks</p>
+    <h1>Graphs: BFS, DFS, Prim and Kruskal</h1>
+    <p class="lede">A graph is a set of points joined by lines: cities and roads, people and friendships, web pages and links. You’ll store graphs two ways, walk through them breadth-first and depth-first, and find the cheapest way to connect everything.</p>
+    <div class="snapshot">
+      <h2>Exam snapshot: what they ask</h2>
+      <ul>
+        <li><span class="m">8M</span><span>Graph terminology; adjacency matrix and list with an example. <a href="#ans-graph-repr">Model answer</a></span></li>
+        <li><span class="m">8M</span><span>BFS and DFS with algorithm and example; compare. <a href="#ans-bfs-dfs">Model answer</a></span></li>
+        <li><span class="m">8M</span><span>Prim’s algorithm with example. <a href="#ans-prim">Model answer</a></span></li>
+        <li><span class="m">8M</span><span>Kruskal’s algorithm with example; Prim vs Kruskal. <a href="#ans-kruskal">Model answer</a></span></li>
+        <li><span class="m">15M</span><span><a href="#ans-l-graph">Graph traversals in full</a> · <a href="#ans-l-mst">MST: Prim + Kruskal in full</a></span></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- ============ Terminology ============ -->
+  <section class="lesson" id="graph-terms" data-title="Graph basics">
+    <div class="lesson-head"><p class="eyebrow">Part 1</p><h2>What is a graph?</h2></div>
+    <p class="idea">A graph <b>G = (V, E)</b> is a set of <mark>vertices</mark> V (nodes) and a set of <mark>edges</mark> E that connect pairs of vertices.</p>
+    <div class="callout analogy"><p>A <b>map of cities</b>. Cities are vertices, roads are edges. A one-way street is a <b>directed</b> edge. The road’s length in km is a <b>weight</b>. Unlike a tree, a graph can have loops of roads (cycles) and no single “root”.</p></div>
+    <figure class="fig"><div class="fig-box" data-fig="graph" data-graph="trav"></div><figcaption class="cap">An undirected graph with V = {A, B, C, D, E, F, G} and 9 edges.</figcaption></figure>
+    <div class="table-wrap"><table class="t compact">
+      <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><b>Undirected graph</b></td><td>Edges have no direction: A–B is the same as B–A.</td></tr>
+        <tr><td><b>Directed graph</b> (digraph)</td><td>Edges have a direction: A → B does not mean B → A.</td></tr>
+        <tr><td><b>Weighted graph</b></td><td>Each edge carries a number (cost, distance, time).</td></tr>
+        <tr><td><b>Adjacent</b></td><td>Two vertices joined by an edge are neighbours.</td></tr>
+        <tr><td><b>Degree</b></td><td>Number of edges at a vertex. In a digraph: <b>in-degree</b> (edges coming in) and <b>out-degree</b> (edges going out).</td></tr>
+        <tr><td><b>Path</b></td><td>A sequence of vertices joined by edges.</td></tr>
+        <tr><td><b>Cycle</b></td><td>A path that starts and ends at the same vertex.</td></tr>
+        <tr><td><b>Connected</b></td><td>There is a path between every pair of vertices.</td></tr>
+        <tr><td><b>Complete graph</b> Kₙ</td><td>Every vertex is joined to every other: n(n − 1)/2 edges.</td></tr>
+        <tr><td><b>DAG</b></td><td>Directed Acyclic Graph: directed, with no cycles (used for task scheduling).</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout tip"><p>Handshake rule: in any undirected graph, the <b>sum of all degrees = 2 × number of edges</b>, because every edge touches two vertices.</p></div>
+    <div data-quiz="graph-terms"></div>
+  </section>
+
+  <!-- ============ Representation ============ -->
+  <section class="lesson" id="graph-repr" data-title="Matrix & list">
+    <div class="lesson-head"><p class="eyebrow">Part 2</p><h2>Adjacency matrix and adjacency list</h2></div>
+    <p class="idea">Two ways to store a graph: a <mark>V × V table of 0s and 1s</mark>, or <mark>one linked list of neighbours per vertex</mark>.</p>
+    <div class="grid-2">
+      <div class="card"><h4>Adjacency matrix</h4><p class="muted">A 2-D array <b>M[V][V]</b>. M[i][j] = 1 if there is an edge from i to j, otherwise 0. For a weighted graph, store the weight instead of 1. For an undirected graph the matrix is <b>symmetric</b>.</p></div>
+      <div class="card"><h4>Adjacency list</h4><p class="muted">An array of V linked lists. List i holds every neighbour of vertex i. Uses memory only for edges that exist.</p></div>
+    </div>
+    <div data-viz="graph-repr"></div>
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th></th><th>Adjacency matrix</th><th>Adjacency list</th></tr></thead>
+      <tbody>
+        <tr><td>Memory</td><td class="mono">O(V²)</td><td class="mono">O(V + E)</td></tr>
+        <tr><td>Is there an edge u–v?</td><td class="mono">O(1)</td><td class="mono">O(degree of u)</td></tr>
+        <tr><td>List all neighbours of u</td><td class="mono">O(V)</td><td class="mono">O(degree of u)</td></tr>
+        <tr><td>Add an edge</td><td class="mono">O(1)</td><td class="mono">O(1)</td></tr>
+        <tr><td>Best for</td><td>Dense graphs (many edges)</td><td>Sparse graphs (few edges)</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout trap"><p>For an undirected graph, every edge appears <b>twice</b>: M[u][v] and M[v][u] in the matrix, and in both u’s and v’s lists. Forgetting the second copy is the most common error.</p></div>
+    <div data-answer-ref="ans-graph-repr"></div>
+    <div data-quiz="graph-repr"></div>
+  </section>
+
+  <!-- ============ BFS / DFS ============ -->
+  <section class="lesson" id="bfs-dfs" data-title="BFS & DFS">
+    <div class="lesson-head"><p class="eyebrow">Part 3</p><h2>Breadth-first and depth-first search</h2></div>
+    <p class="idea"><b>BFS</b> visits vertices <mark>level by level using a queue</mark>. <b>DFS</b> goes <mark>as deep as possible using a stack</mark>, then backtracks.</p>
+    <div class="grid-2">
+      <div class="callout analogy" data-t="BFS is like"><p>Dropping a stone in a pond. The ripple reaches everything 1 step away, then everything 2 steps away, and so on. Or telling a rumour to all your friends, who each tell all their friends.</p></div>
+      <div class="callout analogy" data-t="DFS is like"><p>Exploring a maze. Keep walking down one corridor until you hit a dead end, then go back to the last junction and try the next corridor.</p></div>
+    </div>
+    <div class="grid-2">
+      <div class="algo"><div class="algo-head">BFS(start) <span class="pill">queue</span></div><ol>
+        <li>Mark all vertices unvisited.</li>
+        <li>Mark start as visited and <b>enqueue</b> it.</li>
+        <li>While the queue is not empty: <b>dequeue</b> a vertex u and print it.</li>
+        <li>For every neighbour v of u: if v is not visited, mark it visited and enqueue it.</li></ol></div>
+      <div class="algo"><div class="algo-head">DFS(u) <span class="pill">stack / recursion</span></div><ol>
+        <li>Mark u as visited and print it (push u).</li>
+        <li>For every neighbour v of u: if v is not visited, call <b>DFS(v)</b>.</li>
+        <li>When all neighbours are visited, <b>backtrack</b> (pop u).</li>
+        <li>Start with DFS(start).</li></ol></div>
+    </div>
+    <div class="callout mnemonic"><p><b>B</b>FS = <b>B</b>readth = <b>Q</b>ueue (think “Big Queue at the bank”). <b>D</b>FS = <b>D</b>epth = <b>S</b>tack (“Dive Down, then Step back”).</p></div>
+    <div data-viz="graph-walk"></div>
+    <h3>Worked tables (graph from Part 1, start A, neighbours alphabetical)</h3>
+    <details class="more" open><summary>BFS table</summary><div class="more-body"><div data-trace="graphwalk" data-kind="bfs" data-graph="trav" data-start="A"></div></div></details>
+    <details class="more"><summary>DFS table</summary><div class="more-body"><div data-trace="graphwalk" data-kind="dfs" data-graph="trav" data-start="A"></div></div></details>
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>BFS</th><th>DFS</th></tr></thead>
+      <tbody>
+        <tr><td>Uses a <b>queue</b> (FIFO)</td><td>Uses a <b>stack</b> (LIFO) or recursion</td></tr>
+        <tr><td>Visits level by level</td><td>Goes deep first, then backtracks</td></tr>
+        <tr><td>Finds the <b>shortest path</b> (fewest edges) in unweighted graphs</td><td>Does not guarantee the shortest path</td></tr>
+        <tr><td>Uses more memory on wide graphs</td><td>Uses less memory on wide graphs</td></tr>
+        <tr><td>Uses: shortest path, social-network friend suggestions, GPS nearby search, web crawlers</td><td>Uses: cycle detection, maze solving, topological sort, connected components</td></tr>
+        <tr><td colspan="2" class="c">Both take <b>O(V + E)</b> with an adjacency list, <b>O(V²)</b> with a matrix.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout trap"><p>The order depends on the order you take neighbours. Always say “neighbours are visited in alphabetical (or numerical) order” in your answer. Also mark a vertex visited <b>when you enqueue it</b> in BFS, not when you dequeue it, or it may be added twice.</p></div>
+    <div class="code-tabs" data-title="BFS and DFS">
+<script type="text/plain" data-lang="c">
+#include <stdio.h>
+#define V 7
+int adj[V][V];                 //? Adjacency matrix, filled in main().
+int visited[V];
+
+void bfs(int s) {
+    int q[V], front = 0, rear = 0;
+    for (int i = 0; i < V; i++) visited[i] = 0;
+    visited[s] = 1; q[rear++] = s;           //? Mark when you enqueue.
+    while (front < rear) {
+        int u = q[front++];                  //? Dequeue.
+        printf("%c ", 'A' + u);
+        for (int v = 0; v < V; v++)
+            if (adj[u][v] && !visited[v]) { visited[v] = 1; q[rear++] = v; }
+    }
+}
+
+void dfs(int u) {
+    visited[u] = 1;
+    printf("%c ", 'A' + u);
+    for (int v = 0; v < V; v++)
+        if (adj[u][v] && !visited[v]) dfs(v);   //? Recursion uses the call stack.
+}
+
+void addEdge(int u, int v) { adj[u][v] = adj[v][u] = 1; }
+
+int main() {
+    addEdge(0,1); addEdge(0,2); addEdge(0,3); addEdge(1,4); addEdge(2,4);
+    addEdge(2,5); addEdge(3,5); addEdge(4,6); addEdge(5,6);
+    bfs(0);  printf("\n");                    // A B C D E F G
+    for (int i = 0; i < V; i++) visited[i] = 0;
+    dfs(0);                                   // A B E C F D G
+    return 0;
+}
+</script>
+<script type="text/plain" data-lang="java">
+import java.util.*;
+
+class Traversals {
+    static List<List<Integer>> adj = new ArrayList<>();
+    static void addEdge(int u, int v) { adj.get(u).add(v); adj.get(v).add(u); }
+
+    static void bfs(int s, int n) {
+        boolean[] vis = new boolean[n];
+        Queue<Integer> q = new LinkedList<>();
+        vis[s] = true; q.add(s);
+        while (!q.isEmpty()) {
+            int u = q.poll();
+            System.out.print((char) ('A' + u) + " ");
+            for (int v : adj.get(u)) if (!vis[v]) { vis[v] = true; q.add(v); }
+        }
+    }
+
+    static void dfs(int u, boolean[] vis) {
+        vis[u] = true;
+        System.out.print((char) ('A' + u) + " ");
+        for (int v : adj.get(u)) if (!vis[v]) dfs(v, vis);
+    }
+
+    public static void main(String[] a) {
+        for (int i = 0; i < 7; i++) adj.add(new ArrayList<>());
+        int[][] e = {{0,1},{0,2},{0,3},{1,4},{2,4},{2,5},{3,5},{4,6},{5,6}};
+        for (int[] x : e) addEdge(x[0], x[1]);
+        bfs(0, 7); System.out.println();
+        dfs(0, new boolean[7]);
+    }
+}
+</script>
+<script type="text/plain" data-lang="python">
+from collections import deque
+
+graph = {
+    'A': ['B', 'C', 'D'], 'B': ['A', 'E'], 'C': ['A', 'E', 'F'],
+    'D': ['A', 'F'], 'E': ['B', 'C', 'G'], 'F': ['C', 'D', 'G'], 'G': ['E', 'F'],
+}
+
+def bfs(start):
+    visited, order, q = {start}, [], deque([start])
+    while q:
+        u = q.popleft()                 #? Dequeue from the front.
+        order.append(u)
+        for v in graph[u]:
+            if v not in visited:
+                visited.add(v)
+                q.append(v)
+    return order
+
+def dfs(u, visited=None, order=None):
+    visited = visited if visited is not None else set()
+    order = order if order is not None else []
+    visited.add(u)
+    order.append(u)
+    for v in graph[u]:
+        if v not in visited:
+            dfs(v, visited, order)
+    return order
+
+print(bfs('A'))  # A B C D E F G
+print(dfs('A'))  # A B E C F D G
+</script>
+    </div>
+    <div data-answer-ref="ans-bfs-dfs"></div>
+    <div data-quiz="bfs-dfs"></div>
+  </section>
+
+  <!-- ============ Prim ============ -->
+  <section class="lesson" id="prim" data-title="Prim’s algorithm">
+    <div class="lesson-head"><p class="eyebrow">Part 4</p><h2>Prim’s algorithm</h2></div>
+    <p class="idea">Prim’s grows <mark>one tree from a starting vertex</mark>, each time adding the <mark>cheapest edge that connects a new vertex</mark> to the tree.</p>
+    <div class="callout analogy"><p>A cable company starts at its office. Each day it lays the cheapest cable from any connected house to any unconnected house. It never connects two houses that are already connected. When every house is connected, it stops.</p></div>
+    <div class="algo"><div class="algo-head">Prim’s algorithm</div><ol>
+      <li>Pick a start vertex. Put it in the tree. Total cost = 0.</li>
+      <li>Look at every edge with <b>one end in the tree and the other end outside</b>.</li>
+      <li>Choose the one with the <b>minimum weight</b>. Add that edge and its new vertex to the tree. Add the weight to the total.</li>
+      <li>Repeat steps 2–3 until all V vertices are in the tree (you will have V − 1 edges).</li>
+    </ol></div>
+    <figure class="fig"><div class="fig-box" data-fig="graph" data-graph="mst"></div><figcaption class="cap">The weighted graph used in the examples.</figcaption></figure>
+    <div data-viz="mst-play" data-kind="prim"></div>
+    <h3>Worked table (start A)</h3>
+    <div data-trace="prim" data-graph="mst" data-start="A"></div>
+    <figure class="fig"><div class="fig-box" data-fig="graph" data-graph="mst" data-mst="prim"></div><figcaption class="cap">The minimum spanning tree (thick edges). Draw this as the last part of your answer.</figcaption></figure>
+    <p><b>Complexity:</b> O(V²) with an adjacency matrix; O(E log V) with a priority queue (min-heap). Prim’s is a <b>greedy</b> algorithm: it always takes the best-looking choice right now, and for MSTs that is provably correct.</p>
+    <div data-answer-ref="ans-prim"></div>
+    <div data-quiz="prim"></div>
+  </section>
+
+  <!-- ============ Kruskal ============ -->
+  <section class="lesson" id="kruskal" data-title="Kruskal’s algorithm">
+    <div class="lesson-head"><p class="eyebrow">Part 5</p><h2>Kruskal’s algorithm</h2></div>
+    <p class="idea">Kruskal’s <mark>sorts all edges by weight</mark> and accepts each one in turn <mark>unless it would form a cycle</mark>.</p>
+    <div class="callout analogy"><p>You have a shopping list of every possible road with its cost, sorted cheapest first. Go down the list and build each road, unless both villages are already connected (then that road would only create a loop, so skip it). Stop when you have built V − 1 roads.</p></div>
+    <div class="algo"><div class="algo-head">Kruskal’s algorithm</div><ol>
+      <li>Sort all edges in <b>increasing order</b> of weight.</li>
+      <li>Start with every vertex in its own set (a forest of single vertices).</li>
+      <li>Take the next cheapest edge (u, v). If u and v are in <b>different sets</b>, accept it and <b>union</b> (merge) the two sets. If they are in the <b>same set</b>, reject it: it would form a cycle.</li>
+      <li>Stop when V − 1 edges are accepted.</li>
+    </ol></div>
+    <div class="callout tip"><p><b>Union-find</b> is how we check for a cycle quickly: keep groups of connected vertices. Same group = already connected = cycle. You don’t need to code it: in the exam, just write the sets after each step, like the table below.</p></div>
+    <div data-viz="mst-play" data-kind="kruskal"></div>
+    <h3>Worked table</h3>
+    <div data-trace="kruskal" data-graph="mst"></div>
+    <figure class="fig"><div class="fig-box" data-fig="graph" data-graph="mst" data-mst="kruskal"></div><figcaption class="cap">Same MST, same cost 17. Prim and Kruskal may add the edges in a different order but reach the same minimum total.</figcaption></figure>
+    <p><b>Complexity:</b> O(E log E) (sorting the edges dominates).</p>
+    <h3>Prim vs Kruskal</h3>
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Prim’s</th><th>Kruskal’s</th></tr></thead>
+      <tbody>
+        <tr><td>Starts from a vertex</td><td>Starts from the sorted list of edges</td></tr>
+        <tr><td>Always one connected tree while it works</td><td>A forest of pieces that slowly join together</td></tr>
+        <tr><td>Picks the cheapest edge leaving the tree</td><td>Picks the cheapest edge overall that makes no cycle</td></tr>
+        <tr><td>Better for dense graphs</td><td>Better for sparse graphs</td></tr>
+        <tr><td>O(V²) or O(E log V)</td><td>O(E log E)</td></tr>
+        <tr><td colspan="2" class="c">Both are greedy and both give the same minimum total cost.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout trap"><p>In Kruskal’s, rejecting an edge is a step you must <b>show</b>, with the reason “forms a cycle”. In Prim’s, never pick an edge whose two ends are already both in the tree.</p></div>
+    <div data-answer-ref="ans-kruskal"></div>
+    <div data-quiz="kruskal"></div>
+  </section>
+
+  <section class="stack" aria-labelledby="h-q25-end">
+    <h2 id="h-q25-end">Q25 unit challenge</h2>
+    <div data-quiz-unit="q25" data-count="8" data-title="Q25 unit challenge"></div>
+    <p>15-mark practice: <a href="#ans-l-graph">Graph traversal in full</a> · <a href="#ans-l-mst">MST in full</a>.</p>
+  </section>
+</article>

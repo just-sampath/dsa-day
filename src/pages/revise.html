@@ -1,0 +1,200 @@
+<article class="view" id="revise" hidden>
+  <header class="page-head">
+    <p class="eyebrow"><span class="tag">Last-minute</span> the hour before you sleep, and the morning before the exam</p>
+    <h1>Last-Minute Revision</h1>
+    <p class="lede">Everything on one page: a cheat sheet for each unit, the complexity table, every formula and condition, the mistakes that cost marks, 80 flashcards and a 25-question mock test.</p>
+  </header>
+
+  <!-- ===================== Cheat sheet ===================== -->
+  <section class="lesson" id="cheatsheet" data-title="Cheat sheet">
+    <div class="lesson-head"><p class="eyebrow">One screen per unit</p><h2>Cheat sheet</h2></div>
+    <div class="grid-2">
+      <div class="card">
+        <h4>Q21 · Basics</h4>
+        <ul>
+          <li><b>Data structure</b>: organises data for efficient access. Linear (array, list, stack, queue) vs non-linear (tree, graph).</li>
+          <li><b>Structure</b>: groups different types. <code>s.x</code> for a variable, <code>p-&gt;x</code> for a pointer.</li>
+          <li><b>Union</b>: members share memory; size = largest member.</li>
+          <li><b>malloc</b>(bytes): garbage values · <b>calloc</b>(n, size): zeros · <b>realloc</b>: resize · <b>free</b>: release.</li>
+          <li><b>Leak</b> = never freed · <b>Dangling</b> = used after free.</li>
+          <li><b>O</b> upper / worst · <b>Ω</b> lower / best · <b>Θ</b> tight.</li>
+          <li>Single loop O(n) · nested O(n²) · halving O(log n).</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>Q22 · Linked lists</h4>
+        <ul>
+          <li>Node = <code>[data | next]</code>; head → first; last → NULL.</li>
+          <li><b>Insert front</b>: new→next = head; head = new.</li>
+          <li><b>Insert end</b>: walk to last; last→next = new.</li>
+          <li><b>Delete front</b>: temp = head; head = head→next; free(temp).</li>
+          <li><b>Position k</b>: stop at node k − 1, then relink.</li>
+          <li><b>DLL</b>: <code>[prev | data | next]</code>; update both links.</li>
+          <li><b>CLL</b>: last→next = head; stop when temp == head.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>Q23 · Stacks and queues</h4>
+        <ul>
+          <li><b>Stack</b> LIFO; top = −1 empty; top = MAX − 1 full.</li>
+          <li><b>Queue</b> FIFO; enqueue at rear, dequeue at front.</li>
+          <li><b>Circular</b>: rear = (rear + 1) % N; full when (rear + 1) % N == front; empty when front == −1.</li>
+          <li><b>Brackets</b>: push openers; closer must match the top; stack empty at the end.</li>
+          <li><b>Infix → postfix</b>: operand out; ( push; ) pop until (; operator pops ≥ precedence then pushes. ^ is right-associative.</li>
+          <li><b>Evaluate postfix</b>: number push; operator pop B, pop A, push A op B.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>Q24 · Trees and hashing</h4>
+        <ul>
+          <li>n nodes → n − 1 edges. Pre: Root L R · In: L Root R · Post: L R Root.</li>
+          <li><b>BST</b>: left &lt; node &lt; right. Delete with 2 children → inorder successor.</li>
+          <li><b>Build from traversals</b>: root = first of pre / last of post; split inorder.</li>
+          <li><b>AVL</b>: BF = h(L) − h(R) ∈ {−1, 0, 1}. LL→right, RR→left, LR→left+right, RL→right+left.</li>
+          <li><b>B-tree order m</b>: ≤ m − 1 keys; split → median goes up; leaves on one level.</li>
+          <li><b>Hashing</b>: k mod m. Chaining, linear h+i, quadratic h+i², double h1 + i·h2.</li>
+          <li><b>Spanning tree</b>: all vertices, n − 1 edges, no cycle. Kₙ has n<sup>n−2</sup>.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>Q25 · Graphs</h4>
+        <ul>
+          <li>G = (V, E). Matrix O(V²), O(1) edge check. List O(V + E), best for sparse graphs.</li>
+          <li><b>BFS</b>: queue, level by level, shortest path in unweighted graphs.</li>
+          <li><b>DFS</b>: stack/recursion, deep then backtrack.</li>
+          <li>Both O(V + E) with lists.</li>
+          <li><b>Prim</b>: grow one tree from a vertex with the cheapest edge out. O(V²).</li>
+          <li><b>Kruskal</b>: sort edges; take the cheapest that doesn’t form a cycle (union-find). O(E log E).</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>Answer-writing reminders</h4>
+        <ul>
+          <li>8M ≈ 15 min, 1.5–2 pages · 15M ≈ 30 min, 3–4 pages.</li>
+          <li>Definition → diagram → algorithm steps → example → complexity → applications.</li>
+          <li>Draw every structure: boxes, arrows, NULL, top/front/rear labels.</li>
+          <li>Underline the keywords. Use headings.</li>
+          <li>Scenario: operations → DS → why + complexity → why not the other.</li>
+          <li>Never leave a question blank: the definition and a diagram alone earn marks.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== Complexity table ===================== -->
+  <section class="lesson" id="complexity-table" data-title="Complexity table">
+    <div class="lesson-head"><p class="eyebrow">Learn the pattern, not every cell</p><h2>Master complexity table</h2></div>
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Structure</th><th>Access / search</th><th>Insert</th><th>Delete</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td><b>Array</b></td><td>O(1) by index · O(n) search</td><td>O(n)</td><td>O(n)</td><td>shifting elements</td></tr>
+        <tr><td><b>Sorted array</b></td><td>O(log n) binary search</td><td>O(n)</td><td>O(n)</td><td></td></tr>
+        <tr><td><b>Singly linked list</b></td><td>O(n)</td><td>O(1) front · O(n) end</td><td>O(1) front · O(n) end</td><td>no shifting</td></tr>
+        <tr><td><b>Doubly linked list</b></td><td>O(n)</td><td>O(1) at a known node</td><td>O(1) at a known node</td><td>extra prev pointer</td></tr>
+        <tr><td><b>Stack</b></td><td>O(1) peek</td><td>O(1) push</td><td>O(1) pop</td><td>LIFO</td></tr>
+        <tr><td><b>Queue / circular queue</b></td><td>O(1) front</td><td>O(1) enqueue</td><td>O(1) dequeue</td><td>FIFO</td></tr>
+        <tr><td><b>BST</b></td><td>O(log n) avg · O(n) worst</td><td>O(log n) avg · O(n) worst</td><td>O(log n) avg · O(n) worst</td><td>worst = skewed</td></tr>
+        <tr><td><b>AVL tree</b></td><td>O(log n)</td><td>O(log n)</td><td>O(log n)</td><td>always balanced</td></tr>
+        <tr><td><b>B-tree</b></td><td>O(log n)</td><td>O(log n)</td><td>O(log n)</td><td>few disk reads</td></tr>
+        <tr><td><b>Hash table</b></td><td>O(1) avg · O(n) worst</td><td>O(1) avg</td><td>O(1) avg</td><td>worst = all collide</td></tr>
+      </tbody>
+    </table></div>
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Algorithm</th><th>Time</th><th>Uses</th></tr></thead>
+      <tbody>
+        <tr><td>Linear search</td><td>O(n)</td><td>any list</td></tr>
+        <tr><td>Binary search</td><td>O(log n)</td><td>sorted array</td></tr>
+        <tr><td>Tree traversals</td><td>O(n)</td><td>recursion / stack (level order: queue)</td></tr>
+        <tr><td>Infix → postfix, postfix evaluation, bracket check</td><td>O(n)</td><td>stack</td></tr>
+        <tr><td>BFS / DFS</td><td>O(V + E) list · O(V²) matrix</td><td>queue / stack</td></tr>
+        <tr><td>Prim’s</td><td>O(V²) matrix · O(E log V) heap</td><td>dense graphs</td></tr>
+        <tr><td>Kruskal’s</td><td>O(E log E)</td><td>sparse graphs, union-find</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ===================== Formulas ===================== -->
+  <section class="lesson" id="formulas" data-title="Formulas and conditions">
+    <div class="lesson-head"><p class="eyebrow">Write these exactly</p><h2>Formulas and conditions</h2></div>
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>What</th><th>Formula / condition</th></tr></thead>
+      <tbody>
+        <tr><td>Stack empty / full</td><td>top == −1 · top == MAX − 1</td></tr>
+        <tr><td>Linear queue empty / full</td><td>front == −1 (or front &gt; rear) · rear == MAX − 1</td></tr>
+        <tr><td>Circular queue next index</td><td>(i + 1) % SIZE</td></tr>
+        <tr><td>Circular queue empty / full</td><td>front == −1 · (rear + 1) % SIZE == front</td></tr>
+        <tr><td>Elements in a circular queue</td><td>(rear − front + SIZE) % SIZE + 1 (when not empty)</td></tr>
+        <tr><td>Edges in a tree</td><td>n − 1</td></tr>
+        <tr><td>Max nodes on level i / tree of height h</td><td>2<sup>i</sup> · 2<sup>h+1</sup> − 1</td></tr>
+        <tr><td>Min height with n nodes</td><td>⌈log₂(n + 1)⌉ − 1</td></tr>
+        <tr><td>Array tree (root at 0)</td><td>left 2i + 1 · right 2i + 2 · parent ⌊(i − 1)/2⌋</td></tr>
+        <tr><td>Leaves in a full binary tree</td><td>internal nodes + 1</td></tr>
+        <tr><td>AVL balance factor</td><td>height(left) − height(right) ∈ {−1, 0, +1}</td></tr>
+        <tr><td>B-tree of order m</td><td>max m children, m − 1 keys · min ⌈m/2⌉ children (non-root), ⌈m/2⌉ − 1 keys</td></tr>
+        <tr><td>Hash functions</td><td>k mod m · mid-square · folding · ⌊m (kA mod 1)⌋</td></tr>
+        <tr><td>Probing (i = 0, 1, 2, …)</td><td>linear (h + i) mod m · quadratic (h + i²) mod m · double (h1 + i·h2) mod m</td></tr>
+        <tr><td>Load factor</td><td>α = n / m</td></tr>
+        <tr><td>Spanning tree edges · Cayley</td><td>n − 1 · n<sup>n−2</sup> for Kₙ</td></tr>
+        <tr><td>Complete graph edges</td><td>n(n − 1) / 2 (undirected) · n(n − 1) (directed)</td></tr>
+        <tr><td>Sum of degrees</td><td>2 × number of edges</td></tr>
+        <tr><td>Big-O definition</td><td>f(n) ≤ c·g(n) for all n ≥ n₀</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ===================== Mistakes ===================== -->
+  <section class="lesson" id="mistakes" data-title="Mistakes that cost marks">
+    <div class="lesson-head"><p class="eyebrow">Examiners look for these</p><h2>Mistakes that cost marks</h2></div>
+    <ul class="crosslist two-col-list">
+      <li>Moving head <b>before</b> linking the new node: the list is lost.</li>
+      <li>Forgetting the empty-list (underflow) and single-node cases.</li>
+      <li>Not calling free() after deleting a node.</li>
+      <li>Checking temp == NULL in a circular list: an infinite loop.</li>
+      <li>Updating only next and forgetting prev in a doubly linked list.</li>
+      <li>Circular queue full test written as rear == SIZE − 1.</li>
+      <li>Treating ^ as left-associative: A^B^C is ABC^^, not AB^C^.</li>
+      <li>Writing brackets into the postfix output.</li>
+      <li>Postfix evaluation computing B op A instead of A op B.</li>
+      <li>BST: putting equal or larger keys on the left.</li>
+      <li>AVL: rotating at the wrong node. Fix the <b>lowest</b> node with BF ±2.</li>
+      <li>AVL: naming the case from the root instead of from the unbalanced node.</li>
+      <li>B-tree: splitting too early (before the node has m keys) or sending the wrong key up.</li>
+      <li>Hashing: forgetting “mod m” when probing past the end of the table.</li>
+      <li>Kruskal: accepting an edge that closes a cycle.</li>
+      <li>Prim: picking the cheapest edge in the whole graph (that is Kruskal).</li>
+      <li>BFS/DFS: not marking vertices visited, so they are visited twice.</li>
+      <li>Writing only “Stack” for a scenario, with no reason and no rejected alternative.</li>
+      <li>O(2n) or O(n² + n) left unsimplified: write O(n) and O(n²).</li>
+      <li>No diagram. Almost every DSA answer needs one.</li>
+    </ul>
+  </section>
+
+  <!-- ===================== Flashcards ===================== -->
+  <section class="lesson" id="flashcards" data-title="Flashcards">
+    <div class="lesson-head"><p class="eyebrow">Active recall</p><h2>Flashcards</h2></div>
+    <p>Say the answer out loud before you flip. If you got it, move on; if not, flip, read it, and shuffle it back in later.</p>
+    <div data-flash="all"></div>
+  </section>
+
+  <!-- ===================== Mock test ===================== -->
+  <section class="lesson" id="mock-test" data-title="Mock test">
+    <div class="lesson-head"><p class="eyebrow">25 questions from every unit</p><h2>Mock test</h2></div>
+    <p>A fresh random mix every time you press “Try again”. Score 80% or more to earn the <b>Mock Test Hero</b> badge.</p>
+    <div data-quiz-unit="all" data-count="25" data-badge="mock" data-title="Mock test (25 questions)"></div>
+  </section>
+
+  <!-- ===================== Exam morning ===================== -->
+  <section class="lesson" id="exam-morning" data-title="Exam morning">
+    <div class="lesson-head"><p class="eyebrow">Read this on the way</p><h2>Exam morning checklist</h2></div>
+    <ul class="checklist">
+      <li>Read the whole paper first; start with the question you know best.</li>
+      <li>Split your time by marks: about 15 minutes for each 8-mark answer, 30 for each 15-mark answer.</li>
+      <li>Every answer: definition, diagram, steps, example, complexity, applications.</li>
+      <li>For “write a program”: if you can’t remember the code, write the algorithm in numbered steps. That still earns most of the marks.</li>
+      <li>For tracing questions (AVL, B-tree, hashing, Prim, Kruskal, infix): show every step in a table. The steps carry the marks.</li>
+      <li>Scenario: operations → data structure → why + complexity → why not the other.</li>
+      <li>Leave 5 minutes to underline keywords and label diagrams.</li>
+    </ul>
+    <div class="callout tip"><p>You’ve got this. You don’t have to remember everything. Clear headings, a neat diagram and a worked example will carry you through every question on this paper.</p></div>
+  </section>
+</article>

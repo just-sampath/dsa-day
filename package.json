@@ -1,0 +1,11 @@
+{
+  "name": "dsa-night-before",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Interactive DSA exam-prep site. Built into a single docs/index.html for GitHub Pages.",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test tests/",
+    "serve": "python -m http.server 8080 --directory docs"
+  }
+}

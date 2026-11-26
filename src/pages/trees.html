@@ -1,0 +1,644 @@
+<article class="view" id="trees" hidden>
+  <header class="page-head">
+    <p class="eyebrow"><span class="tag">Q24 · 8 marks</span> the biggest unit, and very likely in 15M too</p>
+    <h1>Trees, AVL, B-trees and hashing</h1>
+    <p class="lede">Trees store data in a hierarchy, like a family tree or folders on a laptop. You’ll learn the vocabulary, build search trees, keep them balanced with AVL rotations, see how databases use B-trees, find data instantly with hashing, and meet spanning trees.</p>
+    <div class="snapshot">
+      <h2>Exam snapshot: what they ask</h2>
+      <ul>
+        <li><span class="m">8M</span><span>Tree terminology, binary tree types, representation. <a href="#ans-tree-basics">Model answer</a></span></li>
+        <li><span class="m">8M</span><span>Construct a BST / traversals / delete. <a href="#ans-bst">Model answer</a></span></li>
+        <li><span class="m">8M</span><span>Construct a binary tree from inorder + preorder/postorder. <a href="#ans-construct">Model answer</a></span></li>
+        <li><span class="m">8M</span><span>AVL tree: rotations and construction. <a href="#ans-avl">Model answer</a></span></li>
+        <li><span class="m">8M</span><span>B-tree of order m: properties and construction. <a href="#ans-btree">Model answer</a></span></li>
+        <li><span class="m">8M</span><span>Hashing: hash functions and collision resolution. <a href="#ans-hashing">Model answer</a></span></li>
+        <li><span class="m">8M</span><span>Spanning tree and minimum spanning tree. <a href="#ans-spanning">Model answer</a></span></li>
+        <li><span class="m">15M</span><span><a href="#ans-l-avl">AVL</a>, <a href="#ans-l-btree">B-tree</a>, <a href="#ans-l-hash">hashing</a> and <a href="#ans-l-bst">BST</a> long answers.</span></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- ============ Tree basics ============ -->
+  <section class="lesson" id="tree-terms" data-title="Tree basics">
+    <div class="lesson-head"><p class="eyebrow">Part 1</p><h2>Tree basics and terminology</h2></div>
+    <p class="idea">A tree is a <mark>non-linear, hierarchical</mark> data structure: a set of nodes connected by edges, with one special node called the <mark>root</mark> and no cycles.</p>
+    <div class="callout analogy"><p>A <b>family tree</b> drawn upside down. The great-grandparent (root) is at the top. Children hang below their parents. People with no children are the <b>leaves</b>. Or think of folders on your laptop: C: drive → Documents → College → DSA.</p></div>
+    <div data-viz="tree-terms"></div>
+    <div class="table-wrap"><table class="t compact">
+      <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><b>Root</b></td><td>The top node. It has no parent.</td></tr>
+        <tr><td><b>Edge</b></td><td>The link between a parent and a child. A tree with n nodes has n − 1 edges.</td></tr>
+        <tr><td><b>Parent / child</b></td><td>A node directly above / directly below another.</td></tr>
+        <tr><td><b>Siblings</b></td><td>Children of the same parent.</td></tr>
+        <tr><td><b>Leaf</b> (external node)</td><td>A node with no children.</td></tr>
+        <tr><td><b>Internal node</b></td><td>A node with at least one child.</td></tr>
+        <tr><td><b>Degree</b></td><td>Number of children of a node. Degree of a tree = maximum degree of any node.</td></tr>
+        <tr><td><b>Level / depth</b></td><td>Number of edges from the root (root is level 0; some books start at 1).</td></tr>
+        <tr><td><b>Height</b></td><td>Number of edges on the longest path from a node down to a leaf. Height of tree = height of root.</td></tr>
+        <tr><td><b>Ancestor / descendant</b></td><td>Any node on the path above / below.</td></tr>
+        <tr><td><b>Subtree</b></td><td>A node together with all its descendants.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Binary trees</h3>
+    <p>A <b>binary tree</b> is a tree where every node has <b>at most 2 children</b>, called the <b>left child</b> and the <b>right child</b>.</p>
+    <div class="grid-2">
+      <div class="card"><h4>Full (strict) binary tree</h4><p class="muted">Every node has 0 or 2 children, never exactly 1.</p></div>
+      <div class="card"><h4>Complete binary tree</h4><p class="muted">Every level is full except possibly the last, which is filled from the <b>left</b>.</p></div>
+      <div class="card"><h4>Perfect binary tree</h4><p class="muted">All internal nodes have 2 children and all leaves are on the same level.</p></div>
+      <div class="card"><h4>Skewed tree</h4><p class="muted">Every node has only a left child (left-skewed) or only a right child (right-skewed). It is really a linked list.</p></div>
+    </div>
+    <div class="grid-2">
+      <figure class="fig"><div class="fig-box" data-fig="tree" data-keys="40 20 60 10 30 50 70"></div><figcaption class="cap">Perfect (also full and complete): 7 nodes, height 2.</figcaption></figure>
+      <figure class="fig"><div class="fig-box" data-fig="tree" data-keys="10 20 30 40"></div><figcaption class="cap">Right-skewed: height 3 with only 4 nodes.</figcaption></figure>
+    </div>
+    <h3>Properties (with height h counted in edges)</h3>
+    <ul>
+      <li>Maximum nodes at level i = <b>2<sup>i</sup></b>.</li>
+      <li>Maximum nodes in a binary tree of height h = <b>2<sup>h+1</sup> − 1</b>.</li>
+      <li>Minimum height for n nodes = <b>⌈log₂(n + 1)⌉ − 1</b>.</li>
+      <li>In a full binary tree, leaves = internal nodes + 1.</li>
+    </ul>
+    <h3>Representing a binary tree</h3>
+    <div class="grid-2">
+      <div class="card"><h4>Array (sequential)</h4><p class="muted">Store the root at index 0. For a node at index i: left child at <b>2i + 1</b>, right child at <b>2i + 2</b>, parent at <b>⌊(i − 1)/2⌋</b>. Good for complete trees, wasteful for skewed ones.</p></div>
+      <div class="card"><h4>Linked</h4><p class="muted">Each node is a structure with three members: <b>[ left | data | right ]</b>. Missing children are NULL. Works for any shape.</p></div>
+    </div>
+    <script type="text/plain" data-code="c" data-title="Node of a binary tree">
+struct node {
+    struct node *left;    //? Address of the left child (NULL if none).
+    int data;
+    struct node *right;   //? Address of the right child (NULL if none).
+};
+</script>
+    <div data-answer-ref="ans-tree-basics"></div>
+    <div data-quiz="tree-basics"></div>
+  </section>
+
+  <!-- ============ Traversals ============ -->
+  <section class="lesson" id="traversals" data-title="Traversals">
+    <div class="lesson-head"><p class="eyebrow">Part 2</p><h2>Tree traversals</h2></div>
+    <p class="idea">A traversal visits <mark>every node exactly once</mark>. The name tells you <mark>when the root is printed</mark>.</p>
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Traversal</th><th>Order</th><th>For the tree below</th></tr></thead>
+      <tbody>
+        <tr><td><b>Preorder</b></td><td><b>Root</b> → Left → Right</td><td class="mono">50 30 20 40 70 60 80</td></tr>
+        <tr><td><b>Inorder</b></td><td>Left → <b>Root</b> → Right</td><td class="mono">20 30 40 50 60 70 80</td></tr>
+        <tr><td><b>Postorder</b></td><td>Left → Right → <b>Root</b></td><td class="mono">20 40 30 60 80 70 50</td></tr>
+        <tr><td><b>Level order</b></td><td>Level by level, left to right (queue)</td><td class="mono">50 30 70 20 40 60 80</td></tr>
+      </tbody>
+    </table></div>
+    <figure class="fig"><div class="fig-box" data-fig="tree" data-keys="50 30 70 20 40 60 80"></div></figure>
+    <div class="callout mnemonic"><p><b>Pre = first, In = in the middle, Post = last</b>: that’s where the root goes. Trick for drawing it by hand: trace a line around the tree starting left of the root. <b>Preorder</b> prints a node when you pass its <b>left</b> side, <b>inorder</b> when you pass <b>underneath</b>, <b>postorder</b> when you pass its <b>right</b> side.</p></div>
+    <div class="algo"><div class="algo-head">Recursive algorithms</div><ol>
+      <li><b>Preorder(node)</b>: if node is NULL return; visit node; Preorder(left); Preorder(right).</li>
+      <li><b>Inorder(node)</b>: if node is NULL return; Inorder(left); visit node; Inorder(right).</li>
+      <li><b>Postorder(node)</b>: if node is NULL return; Postorder(left); Postorder(right); visit node.</li>
+      <li><b>Level order</b>: put root in a queue; while the queue is not empty: dequeue a node, visit it, enqueue its left and right children.</li>
+    </ol></div>
+    <div data-viz="traversal-play"></div>
+    <div class="callout tip"><p>Inorder of a <b>binary search tree</b> always comes out <b>sorted</b>. Use it to check your BST answers in the exam.</p></div>
+    <div data-quiz="traversal"></div>
+  </section>
+
+  <!-- ============ BST ============ -->
+  <section class="lesson" id="bst" data-title="Binary search tree">
+    <div class="lesson-head"><p class="eyebrow">Part 3</p><h2>Binary search tree (BST)</h2></div>
+    <p class="idea">In a BST, every node’s <mark>left subtree has smaller keys</mark> and its <mark>right subtree has bigger keys</mark>.</p>
+    <div class="callout analogy"><p>The <b>“guess my number”</b> game. “Is it bigger than 50?” “Yes.” “Bigger than 75?” “No.” Each answer throws away half of the possibilities. A BST stores data so that every search is that game.</p></div>
+    <div class="grid-3">
+      <div class="algo"><div class="algo-head">Search(key)</div><ol>
+        <li>Start at the root.</li>
+        <li>If key == node: found.</li>
+        <li>If key &lt; node: go left, else go right.</li>
+        <li>If you reach NULL: not found.</li></ol></div>
+      <div class="algo"><div class="algo-head">Insert(key)</div><ol>
+        <li>If the tree is empty, the key becomes the root.</li>
+        <li>Otherwise compare as in search, going left or right.</li>
+        <li>When the spot you need is NULL, attach the new node there.</li></ol></div>
+      <div class="algo"><div class="algo-head">Delete(key): 3 cases</div><ol>
+        <li><b>Leaf</b>: just remove it.</li>
+        <li><b>One child</b>: link the parent straight to that child.</li>
+        <li><b>Two children</b>: replace the key with its <b>inorder successor</b> (smallest key in the right subtree), then delete the successor.</li></ol></div>
+    </div>
+    <div data-viz="bst-play"></div>
+    <h3>Worked example: insert 45, 15, 79, 90, 10, 55, 12, 20, 50</h3>
+    <details class="more"><summary>Show every insertion</summary><div class="more-body"><div data-trace="bst" data-keys="45 15 79 90 10 55 12 20 50"></div></div></details>
+    <figure class="fig"><div class="fig-box" data-fig="tree" data-keys="45 15 79 90 10 55 12 20 50"></div><figcaption class="cap">Final BST. Inorder: 10 12 15 20 45 50 55 79 90 (sorted ✓).</figcaption></figure>
+    <p><b>Complexity:</b> search, insert and delete take <b>O(h)</b> where h is the height. That is <b>O(log n)</b> for a balanced tree but <b>O(n)</b> for a skewed one, which is why AVL trees exist.</p>
+    <div class="code-tabs" data-title="BST: insert, search, traversals">
+<script type="text/plain" data-lang="c">
+#include <stdio.h>
+#include <stdlib.h>
+struct node { struct node *left; int data; struct node *right; };
+
+struct node* insert(struct node *root, int key) {
+    if (root == NULL) {                                    //? Empty spot found: make the node here.
+        struct node *n = malloc(sizeof(struct node));
+        n->data = key; n->left = n->right = NULL;
+        return n;
+    }
+    if (key < root->data) root->left = insert(root->left, key);   //? Smaller goes left.
+    else if (key > root->data) root->right = insert(root->right, key);
+    return root;
+}
+
+struct node* search(struct node *root, int key) {
+    if (root == NULL || root->data == key) return root;
+    return key < root->data ? search(root->left, key) : search(root->right, key);
+}
+
+struct node* minNode(struct node *n) { while (n->left) n = n->left; return n; }
+
+struct node* deleteNode(struct node *root, int key) {
+    if (root == NULL) return NULL;
+    if (key < root->data) root->left = deleteNode(root->left, key);
+    else if (key > root->data) root->right = deleteNode(root->right, key);
+    else {
+        if (root->left == NULL) { struct node *t = root->right; free(root); return t; }  //? Leaf or one child.
+        if (root->right == NULL) { struct node *t = root->left; free(root); return t; }
+        struct node *s = minNode(root->right);             //? Two children: inorder successor.
+        root->data = s->data;
+        root->right = deleteNode(root->right, s->data);
+    }
+    return root;
+}
+
+void inorder(struct node *r)   { if (r) { inorder(r->left); printf("%d ", r->data); inorder(r->right); } }
+void preorder(struct node *r)  { if (r) { printf("%d ", r->data); preorder(r->left); preorder(r->right); } }
+void postorder(struct node *r) { if (r) { postorder(r->left); postorder(r->right); printf("%d ", r->data); } }
+
+int main() {
+    int keys[] = {45, 15, 79, 90, 10, 55, 12, 20, 50};
+    struct node *root = NULL;
+    for (int i = 0; i < 9; i++) root = insert(root, keys[i]);
+    inorder(root);     // 10 12 15 20 45 50 55 79 90
+    return 0;
+}
+</script>
+<script type="text/plain" data-lang="java">
+class BST {
+    static class Node { int data; Node left, right; Node(int d) { data = d; } }
+    Node root;
+
+    Node insert(Node r, int key) {
+        if (r == null) return new Node(key);
+        if (key < r.data) r.left = insert(r.left, key);
+        else if (key > r.data) r.right = insert(r.right, key);
+        return r;
+    }
+    boolean search(Node r, int key) {
+        if (r == null) return false;
+        if (key == r.data) return true;
+        return key < r.data ? search(r.left, key) : search(r.right, key);
+    }
+    Node delete(Node r, int key) {
+        if (r == null) return null;
+        if (key < r.data) r.left = delete(r.left, key);
+        else if (key > r.data) r.right = delete(r.right, key);
+        else {
+            if (r.left == null) return r.right;
+            if (r.right == null) return r.left;
+            Node s = r.right; while (s.left != null) s = s.left;
+            r.data = s.data;
+            r.right = delete(r.right, s.data);
+        }
+        return r;
+    }
+    void inorder(Node r) { if (r != null) { inorder(r.left); System.out.print(r.data + " "); inorder(r.right); } }
+}
+</script>
+<script type="text/plain" data-lang="python">
+class Node:
+    def __init__(self, key):
+        self.data, self.left, self.right = key, None, None
+
+def insert(root, key):
+    if root is None:
+        return Node(key)
+    if key < root.data:
+        root.left = insert(root.left, key)
+    elif key > root.data:
+        root.right = insert(root.right, key)
+    return root
+
+def search(root, key):
+    while root and root.data != key:
+        root = root.left if key < root.data else root.right
+    return root is not None
+
+def delete(root, key):
+    if root is None:
+        return None
+    if key < root.data:
+        root.left = delete(root.left, key)
+    elif key > root.data:
+        root.right = delete(root.right, key)
+    else:
+        if root.left is None:
+            return root.right
+        if root.right is None:
+            return root.left
+        s = root.right
+        while s.left:
+            s = s.left
+        root.data = s.data
+        root.right = delete(root.right, s.data)
+    return root
+
+def inorder(r):
+    return inorder(r.left) + [r.data] + inorder(r.right) if r else []
+
+root = None
+for k in [45, 15, 79, 90, 10, 55, 12, 20, 50]:
+    root = insert(root, k)
+print(inorder(root))
+</script>
+    </div>
+    <div data-answer-ref="ans-bst"></div>
+    <div data-quiz="bst"></div>
+  </section>
+
+  <!-- ============ Construct ============ -->
+  <section class="lesson" id="tree-construct" data-title="Constructing a tree">
+    <div class="lesson-head"><p class="eyebrow">Part 4</p><h2>Constructing a tree from traversals</h2></div>
+    <p class="idea">Preorder or postorder tells you <mark>who the root is</mark>. Inorder tells you <mark>who goes left and who goes right</mark>.</p>
+    <div class="callout analogy"><p>Seating a family photo. One list tells you who is the eldest of each group (the root). The other list is the left-to-right order in the photo (inorder): everyone left of the eldest belongs to the left group, everyone right of them to the right group.</p></div>
+    <div class="algo"><div class="algo-head">Algorithm (inorder + preorder)</div><ol>
+      <li>The <b>first</b> element of preorder is the root.</li>
+      <li>Find the root in the inorder list. Elements to its <b>left</b> form the left subtree, elements to its <b>right</b> form the right subtree.</li>
+      <li>Take the next element of preorder: it is the root of the left subtree. Repeat steps 2–3 for it.</li>
+      <li>When the left subtree is done, continue with the right subtree.</li>
+    </ol></div>
+    <p>With <b>inorder + postorder</b> the only change: take roots from the <b>end</b> of postorder, and build the <b>right</b> subtree before the left.</p>
+    <div class="callout trap"><p>You always need <b>inorder</b>. Preorder + postorder alone can’t tell left from right when a node has only one child, so they don’t give a unique binary tree.</p></div>
+    <div data-viz="treebuild-play"></div>
+    <h3>Worked example</h3>
+    <p>Inorder: <code>D B E A F C</code> &nbsp; Preorder: <code>A B D E C F</code></p>
+    <div data-trace="treebuild" data-in="D B E A F C" data-pre="A B D E C F"></div>
+    <h3>Constructing a BST from a sequence</h3>
+    <p>If the question gives just a list of numbers and says “construct a binary <b>search</b> tree”, insert them one by one with the BST rule (smaller left, bigger right), as in <a href="#bst">Part 3</a>.</p>
+    <div data-answer-ref="ans-construct"></div>
+    <div data-quiz="construct"></div>
+  </section>
+
+  <!-- ============ AVL ============ -->
+  <section class="lesson" id="avl" data-title="AVL trees">
+    <div class="lesson-head"><p class="eyebrow">Part 5</p><h2>AVL trees: self-balancing BSTs</h2></div>
+    <p class="idea">An AVL tree is a BST where, for every node, the <mark>heights of the left and right subtrees differ by at most 1</mark>.</p>
+    <div class="callout analogy"><p>A BST built from <code>10, 20, 30, 40, 50</code> becomes a straight line (skewed), so searching is as slow as a linked list. An AVL tree is a BST with a rule that keeps it from leaning: whenever one side gets too heavy, it <b>rotates</b> to rebalance, like shifting books so a shelf doesn’t tip over. Named after its inventors <b>A</b>delson-<b>V</b>elsky and <b>L</b>andis.</p></div>
+    <div class="callout key" data-t="Balance factor"><p><b>BF(node) = height(left subtree) − height(right subtree)</b>. In an AVL tree every BF is <b>−1, 0 or +1</b>. If any BF becomes <b>+2 or −2</b>, rotate.</p></div>
+    <h3>The four cases and their rotations</h3>
+    <p>Find the <b>lowest</b> node that became unbalanced. Look at the path from it towards the newly inserted node: the first two steps name the case.</p>
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Case</th><th>New key went…</th><th>BF of unbalanced node</th><th>Fix</th></tr></thead>
+      <tbody>
+        <tr><td><b>LL</b></td><td>Left, then Left</td><td>+2</td><td>One <b>right</b> rotation</td></tr>
+        <tr><td><b>RR</b></td><td>Right, then Right</td><td>−2</td><td>One <b>left</b> rotation</td></tr>
+        <tr><td><b>LR</b></td><td>Left, then Right</td><td>+2</td><td><b>Left</b> rotation at the child, then <b>right</b> rotation</td></tr>
+        <tr><td><b>RL</b></td><td>Right, then Left</td><td>−2</td><td><b>Right</b> rotation at the child, then <b>left</b> rotation</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout mnemonic"><p><b>Rotate the opposite way to the lean.</b> Leaning left (LL) → rotate right. Leaning right (RR) → rotate left. For a zig-zag (LR or RL), first straighten the zig-zag with a rotation at the child, then do the single rotation.</p></div>
+    <div class="grid-2">
+      <div class="fig"><b>LL: insert 30, 20, 10</b><div data-trace="avl" data-keys="30 20 10" data-last="2"></div></div>
+      <div class="fig"><b>RR: insert 10, 20, 30</b><div data-trace="avl" data-keys="10 20 30" data-last="2"></div></div>
+      <div class="fig"><b>LR: insert 30, 10, 20</b><div data-trace="avl" data-keys="30 10 20" data-last="2"></div></div>
+      <div class="fig"><b>RL: insert 10, 30, 20</b><div data-trace="avl" data-keys="10 30 20" data-last="2"></div></div>
+    </div>
+    <div class="callout tip"><p>The general rotation in words. <b>Right rotation at Z</b>: Z’s left child Y moves up into Z’s place; Z becomes Y’s right child; Y’s old right subtree becomes Z’s new left subtree. <b>Left rotation</b> is the mirror image. Everything stays in BST order.</p></div>
+    <div class="algo"><div class="algo-head">AVL insertion algorithm</div><ol>
+      <li>Insert the key exactly as in a BST.</li>
+      <li>Walk back up from the new node, updating heights and balance factors.</li>
+      <li>At the first node whose BF is +2 or −2, identify the case (LL, RR, LR, RL) and apply its rotation.</li>
+      <li>After one (single or double) rotation, the whole tree is balanced again.</li>
+    </ol></div>
+    <div data-viz="avl-play" data-keys="21 26 30 9 4 14 28 18 15 10 2 3 7"></div>
+    <h3>Worked example: 50, 20, 60, 10, 8, 15, 32, 46, 11, 48</h3>
+    <details class="more"><summary>Show every insertion with balance factors</summary><div class="more-body"><div data-trace="avl" data-keys="50 20 60 10 8 15 32 46 11 48"></div></div></details>
+    <p><b>Deletion</b> works the same way: delete as in a BST, then walk up and rotate wherever a BF becomes ±2 (you may need more than one rotation on the way up). <b>Complexity</b>: search, insert, delete are all <b>O(log n)</b> because the height stays about log₂ n.</p>
+    <div class="code-tabs" data-title="AVL rotations and insert">
+<script type="text/plain" data-lang="c">
+struct node { struct node *left, *right; int data, height; };
+
+int height(struct node *n) { return n ? n->height : 0; }
+int max(int a, int b) { return a > b ? a : b; }
+int bf(struct node *n) { return n ? height(n->left) - height(n->right) : 0; }
+
+struct node* rightRotate(struct node *z) {
+    struct node *y = z->left, *t = y->right;
+    y->right = z;  z->left = t;                       //? y moves up, z goes down to the right.
+    z->height = 1 + max(height(z->left), height(z->right));
+    y->height = 1 + max(height(y->left), height(y->right));
+    return y;                                         //? y is the new root of this subtree.
+}
+
+struct node* leftRotate(struct node *z) {
+    struct node *y = z->right, *t = y->left;
+    y->left = z;  z->right = t;
+    z->height = 1 + max(height(z->left), height(z->right));
+    y->height = 1 + max(height(y->left), height(y->right));
+    return y;
+}
+
+struct node* insert(struct node *n, int key) {
+    if (n == NULL) {
+        n = malloc(sizeof(struct node));
+        n->data = key; n->left = n->right = NULL; n->height = 1;
+        return n;
+    }
+    if (key < n->data) n->left = insert(n->left, key);
+    else if (key > n->data) n->right = insert(n->right, key);
+    else return n;
+    n->height = 1 + max(height(n->left), height(n->right));
+    int b = bf(n);
+    if (b > 1 && key < n->left->data) return rightRotate(n);                       //? LL
+    if (b < -1 && key > n->right->data) return leftRotate(n);                      //? RR
+    if (b > 1 && key > n->left->data) { n->left = leftRotate(n->left); return rightRotate(n); }   //? LR
+    if (b < -1 && key < n->right->data) { n->right = rightRotate(n->right); return leftRotate(n); } //? RL
+    return n;
+}
+</script>
+<script type="text/plain" data-lang="java">
+class AVL {
+    static class Node { int data, height = 1; Node left, right; Node(int d) { data = d; } }
+    int h(Node n) { return n == null ? 0 : n.height; }
+    int bf(Node n) { return n == null ? 0 : h(n.left) - h(n.right); }
+    void upd(Node n) { n.height = 1 + Math.max(h(n.left), h(n.right)); }
+
+    Node rightRotate(Node z) { Node y = z.left; z.left = y.right; y.right = z; upd(z); upd(y); return y; }
+    Node leftRotate(Node z)  { Node y = z.right; z.right = y.left; y.left = z; upd(z); upd(y); return y; }
+
+    Node insert(Node n, int key) {
+        if (n == null) return new Node(key);
+        if (key < n.data) n.left = insert(n.left, key);
+        else if (key > n.data) n.right = insert(n.right, key);
+        else return n;
+        upd(n);
+        int b = bf(n);
+        if (b > 1 && key < n.left.data) return rightRotate(n);                         // LL
+        if (b < -1 && key > n.right.data) return leftRotate(n);                        // RR
+        if (b > 1) { n.left = leftRotate(n.left); return rightRotate(n); }             // LR
+        if (b < -1) { n.right = rightRotate(n.right); return leftRotate(n); }          // RL
+        return n;
+    }
+}
+</script>
+<script type="text/plain" data-lang="python">
+class Node:
+    def __init__(self, key):
+        self.data, self.left, self.right, self.height = key, None, None, 1
+
+def h(n): return n.height if n else 0
+def bf(n): return h(n.left) - h(n.right) if n else 0
+def upd(n): n.height = 1 + max(h(n.left), h(n.right))
+
+def right_rotate(z):
+    y = z.left
+    z.left, y.right = y.right, z
+    upd(z); upd(y)
+    return y
+
+def left_rotate(z):
+    y = z.right
+    z.right, y.left = y.left, z
+    upd(z); upd(y)
+    return y
+
+def insert(n, key):
+    if n is None:
+        return Node(key)
+    if key < n.data:
+        n.left = insert(n.left, key)
+    elif key > n.data:
+        n.right = insert(n.right, key)
+    else:
+        return n
+    upd(n)
+    b = bf(n)
+    if b > 1 and key < n.left.data:      # LL
+        return right_rotate(n)
+    if b < -1 and key > n.right.data:    # RR
+        return left_rotate(n)
+    if b > 1:                            # LR
+        n.left = left_rotate(n.left)
+        return right_rotate(n)
+    if b < -1:                           # RL
+        n.right = right_rotate(n.right)
+        return left_rotate(n)
+    return n
+</script>
+    </div>
+    <div data-answer-ref="ans-avl"></div>
+    <div data-quiz="avl"></div>
+  </section>
+
+  <!-- ============ B-tree ============ -->
+  <section class="lesson" id="btree" data-title="B-trees">
+    <div class="lesson-head"><p class="eyebrow">Part 6</p><h2>B-trees</h2></div>
+    <p class="idea">A B-tree is a <mark>balanced multi-way search tree</mark>: each node can hold several keys and have many children, and <mark>all leaves are on the same level</mark>.</p>
+    <div class="callout analogy"><p>A <b>library catalogue</b>. Instead of a yes/no question at each step (binary), each drawer label splits the books into many ranges: A–F, G–M, N–S, T–Z. Fewer steps to reach the right shelf. Databases and file systems use B-trees because reading from disk is slow, and a short, wide tree needs very few disk reads.</p></div>
+    <h3>Properties of a B-tree of order m</h3>
+    <ol class="steps">
+      <li>Every node has <b>at most m children</b> and <b>at most m − 1 keys</b>.</li>
+      <li>Every internal node except the root has <b>at least ⌈m/2⌉ children</b> (so at least ⌈m/2⌉ − 1 keys).</li>
+      <li>The root has at least 2 children (unless it is a leaf).</li>
+      <li><b>All leaves are on the same level</b> (the tree is always perfectly balanced).</li>
+      <li>Keys inside a node are in <b>sorted order</b>, and a node with k keys has k + 1 children. Keys in the i-th child lie between the (i−1)-th and i-th keys of the parent.</li>
+    </ol>
+    <div class="table-wrap"><table class="t compact">
+      <thead><tr><th>Order m</th><th>Max keys</th><th>Max children</th><th>Min keys (non-root)</th></tr></thead>
+      <tbody>
+        <tr><td>3</td><td>2</td><td>3</td><td>1</td></tr>
+        <tr><td>4</td><td>3</td><td>4</td><td>1</td></tr>
+        <tr><td>5</td><td>4</td><td>5</td><td>2</td></tr>
+      </tbody>
+    </table></div>
+    <div class="algo"><div class="algo-head">Insertion algorithm</div><ol>
+      <li>Search for the key’s place: start at the root and go down to the correct <b>leaf</b>.</li>
+      <li>Insert the key into that leaf in sorted order.</li>
+      <li>If the leaf now has <b>m keys</b> (one too many), <b>split</b> it: the <b>median key moves up</b> into the parent, the keys left of it form one node, the keys right of it form another.</li>
+      <li>If the parent now overflows, split it the same way. Repeat upwards.</li>
+      <li>If the root splits, the median becomes a <b>new root</b> and the tree grows one level taller. B-trees grow at the <b>top</b>, never at the bottom.</li>
+    </ol></div>
+    <div data-viz="btree-play" data-order="3" data-keys="10 20 30 40 50 60 70 80 90"></div>
+    <h3>Worked example: order 5</h3>
+    <p>Insert <code>C N G A H E K Q M F W L T Z D P R X Y S</code> into a B-tree of order 5 (max 4 keys per node).</p>
+    <div data-trace="btree" data-order="5" data-keys="C N G A H E K Q M F W L T Z D P R X Y S"></div>
+    <h3>Deletion in brief</h3>
+    <ul>
+      <li>Delete from a leaf. If the key is in an internal node, swap it with its inorder predecessor or successor (which is in a leaf) first.</li>
+      <li>If the leaf now has too few keys: <b>borrow</b> a key from a sibling through the parent, if the sibling has a spare.</li>
+      <li>Otherwise <b>merge</b> the leaf with a sibling and pull the separating key down from the parent. This can shrink the tree’s height.</li>
+    </ul>
+    <h3>B-tree vs B+ tree</h3>
+    <div class="table-wrap"><table class="t compact">
+      <thead><tr><th>B-tree</th><th>B+ tree</th></tr></thead>
+      <tbody>
+        <tr><td>Data can be stored in any node</td><td>Data is stored only in the leaves</td></tr>
+        <tr><td>Leaves are not linked</td><td>Leaves are linked, so range queries are fast</td></tr>
+        <tr><td>Keys appear once</td><td>Internal keys are copies used as signposts</td></tr>
+      </tbody>
+    </table></div>
+    <p><b>Applications</b>: database indexes (MySQL, Oracle), file systems (NTFS, ext4), anything stored on disk. <b>Complexity</b>: search, insert and delete are O(log n).</p>
+    <div class="callout trap"><p>Two classic mistakes: inserting a new key into an internal node (always insert into a <b>leaf</b>), and forgetting that splitting pushes the <b>median</b> up instead of the new key.</p></div>
+    <div data-answer-ref="ans-btree"></div>
+    <div data-quiz="btree"></div>
+  </section>
+
+  <!-- ============ Hashing ============ -->
+  <section class="lesson" id="hashing" data-title="Hashing">
+    <div class="lesson-head"><p class="eyebrow">Part 7</p><h2>Hashing and collision resolution</h2></div>
+    <p class="idea">Hashing uses a <mark>hash function</mark> to turn a key directly into an array index, so search, insert and delete take <mark>O(1)</mark> on average.</p>
+    <div class="callout analogy"><p><b>Lockers at the gym.</b> Your locker number is your roll number mod 100: roll 2345 → locker 45. You walk straight to it, no searching. But roll 1245 also maps to locker 45. That clash is a <b>collision</b>, and collision resolution is the rule for where the second person goes.</p></div>
+    <div class="table-wrap"><table class="t compact">
+      <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><b>Hash table</b></td><td>The array that stores the keys. Each position is a <b>slot</b> or <b>bucket</b>.</td></tr>
+        <tr><td><b>Hash function</b> h(k)</td><td>Turns a key into a slot number between 0 and m − 1.</td></tr>
+        <tr><td><b>Collision</b></td><td>Two different keys get the same slot.</td></tr>
+        <tr><td><b>Load factor</b> α</td><td>α = n / m (keys stored ÷ table size). Lower α → fewer collisions.</td></tr>
+      </tbody>
+    </table></div>
+    <h3>Hash functions</h3>
+    <ol class="steps">
+      <li><b>Division</b>: h(k) = k mod m. Choose m as a prime. The most common in exams.</li>
+      <li><b>Mid-square</b>: square the key and take the middle digits. 123² = 15129 → middle “1” or “51”.</li>
+      <li><b>Folding</b>: split the key into parts and add them. 123456 → 123 + 456 = 579.</li>
+      <li><b>Multiplication</b>: h(k) = ⌊m × (k·A mod 1)⌋ with 0 &lt; A &lt; 1 (often A ≈ 0.618).</li>
+    </ol>
+    <p>A <b>good hash function</b> is quick to compute, spreads keys evenly over the table, and causes few collisions.</p>
+    <div data-viz="hashfn-calc"></div>
+    <h3>Collision resolution techniques</h3>
+    <div class="grid-2">
+      <div class="card"><h4>1. Separate chaining (open hashing)</h4><p class="muted">Each slot holds a <b>linked list</b>. Colliding keys are added to that slot’s list. The table never “fills up”.</p></div>
+      <div class="card"><h4>2. Open addressing (closed hashing)</h4><p class="muted">All keys live inside the table itself. On a collision, <b>probe</b> other slots until a free one is found:</p>
+        <ul class="small"><li><b>Linear probing</b>: h, h+1, h+2, … → (h + i) mod m</li><li><b>Quadratic probing</b>: h, h+1, h+4, h+9, … → (h + i²) mod m</li><li><b>Double hashing</b>: (h1(k) + i·h2(k)) mod m, with a second hash such as h2(k) = R − (k mod R)</li></ul></div>
+    </div>
+    <div data-viz="hash-play"></div>
+    <h3>Same keys, four methods (72, 27, 36, 24, 63, 81, 92, 101, m = 10)</h3>
+    <details class="more" open><summary>Linear probing</summary><div class="more-body"><div data-trace="hash" data-keys="72 27 36 24 63 81 92 101" data-m="10" data-method="linear"></div></div></details>
+    <details class="more"><summary>Separate chaining</summary><div class="more-body"><div data-trace="hash" data-keys="72 27 36 24 63 81 92 101" data-m="10" data-method="chaining"></div></div></details>
+    <details class="more"><summary>Quadratic probing</summary><div class="more-body"><div data-trace="hash" data-keys="72 27 36 24 63 81 92 101" data-m="10" data-method="quadratic"></div></div></details>
+    <details class="more"><summary>Double hashing (R = 7)</summary><div class="more-body"><div data-trace="hash" data-keys="72 27 36 24 63 81 92 101" data-m="10" data-method="double"></div></div></details>
+    <h3>Clustering and rehashing</h3>
+    <ul>
+      <li><b>Primary clustering</b> (linear probing): occupied slots bunch together in long runs, so new keys take longer and longer to place. See how 92 and 101 had to walk past a cluster above.</li>
+      <li><b>Secondary clustering</b> (quadratic probing): keys with the same home slot follow the same probe sequence. Double hashing avoids both.</li>
+      <li><b>Rehashing</b>: when the load factor gets too high (say α &gt; 0.7), create a bigger table (about double size, a prime) and re-insert every key with the new hash function.</li>
+    </ul>
+    <div class="table-wrap"><table class="t compact">
+      <thead><tr><th>Chaining</th><th>Open addressing</th></tr></thead>
+      <tbody>
+        <tr><td>Keys stored in linked lists outside the table</td><td>Keys stored inside the table</td></tr>
+        <tr><td>Table never overflows; α can exceed 1</td><td>Table can fill up; α ≤ 1</td></tr>
+        <tr><td>Extra memory for pointers</td><td>No pointers, but clustering</td></tr>
+        <tr><td>Deletion is simple</td><td>Deletion needs a “deleted” marker</td></tr>
+      </tbody>
+    </table></div>
+    <p><b>Applications</b>: symbol tables in compilers, database indexing, caches, password storage, phone contacts lookup.</p>
+    <div class="code-tabs" data-title="Hash table with linear probing">
+<script type="text/plain" data-lang="c">
+#include <stdio.h>
+#define M 10
+int table[M];
+
+void init() { for (int i = 0; i < M; i++) table[i] = -1; }   //? -1 marks an empty slot.
+
+void insert(int key) {
+    int h = key % M;                       //? Division method.
+    for (int i = 0; i < M; i++) {
+        int idx = (h + i) % M;             //? Linear probing: h, h+1, h+2, ...
+        if (table[idx] == -1) { table[idx] = key; return; }
+    }
+    printf("Table full, cannot insert %d\n", key);
+}
+
+int search(int key) {
+    int h = key % M;
+    for (int i = 0; i < M; i++) {
+        int idx = (h + i) % M;
+        if (table[idx] == -1) return -1;   //? An empty slot means the key was never inserted.
+        if (table[idx] == key) return idx;
+    }
+    return -1;
+}
+
+int main() {
+    int keys[] = {72, 27, 36, 24, 63, 81, 92, 101};
+    init();
+    for (int i = 0; i < 8; i++) insert(keys[i]);
+    for (int i = 0; i < M; i++) printf("%d: %d\n", i, table[i]);
+    return 0;
+}
+</script>
+<script type="text/plain" data-lang="java">
+class LinearProbing {
+    static final int M = 10;
+    static Integer[] table = new Integer[M];
+
+    static void insert(int key) {
+        int h = key % M;
+        for (int i = 0; i < M; i++) {
+            int idx = (h + i) % M;
+            if (table[idx] == null) { table[idx] = key; return; }
+        }
+        System.out.println("Table full");
+    }
+
+    public static void main(String[] a) {
+        for (int k : new int[]{72, 27, 36, 24, 63, 81, 92, 101}) insert(k);
+        for (int i = 0; i < M; i++) System.out.println(i + ": " + table[i]);
+    }
+}
+</script>
+<script type="text/plain" data-lang="python">
+M = 10
+table = [None] * M
+
+def insert(key):
+    h = key % M
+    for i in range(M):
+        idx = (h + i) % M          #? Linear probing.
+        if table[idx] is None:
+            table[idx] = key
+            return
+    print("Table full")
+
+for k in [72, 27, 36, 24, 63, 81, 92, 101]:
+    insert(k)
+for i, v in enumerate(table):
+    print(i, v)
+</script>
+    </div>
+    <div data-answer-ref="ans-hashing"></div>
+    <div data-quiz="hashing"></div>
+  </section>
+
+  <!-- ============ Spanning tree ============ -->
+  <section class="lesson" id="spanning-tree" data-title="Spanning trees">
+    <div class="lesson-head"><p class="eyebrow">Part 8</p><h2>Spanning trees</h2></div>
+    <p class="idea">A spanning tree of a connected graph is a subgraph that <mark>includes every vertex</mark>, is <mark>connected</mark>, and has <mark>no cycle</mark>.</p>
+    <div class="callout analogy"><p>A town has many possible roads between 4 villages. The council only needs <b>enough</b> roads so that every village can reach every other one, with no road that makes a loop (a loop means one road was unnecessary). That minimal road network is a spanning tree.</p></div>
+    <h3>Properties</h3>
+    <ul class="checklist">
+      <li>A graph with <b>n</b> vertices has spanning trees with exactly <b>n − 1</b> edges.</li>
+      <li>It has <b>no cycles</b>. Adding any one more edge creates a cycle.</li>
+      <li>Removing any one edge disconnects it (it is “minimally connected”).</li>
+      <li>A connected graph can have <b>many</b> spanning trees. A disconnected graph has <b>none</b>.</li>
+      <li>A <b>complete graph</b> with n vertices has <b>n<sup>n−2</sup></b> spanning trees (Cayley’s formula). K₄ has 4² = 16.</li>
+    </ul>
+    <div class="callout key" data-t="Minimum spanning tree (MST)"><p>In a <b>weighted</b> graph, the MST is the spanning tree whose <b>total edge weight is the smallest</b>. Two famous algorithms find it: <a href="#prim">Prim’s</a> and <a href="#kruskal">Kruskal’s</a> (Q25).</p></div>
+    <div data-viz="span-game"></div>
+    <p><b>Applications</b>: designing cable, road, water or electricity networks at minimum cost; network routing protocols (avoiding loops); cluster analysis; approximate solutions to the travelling salesman problem.</p>
+    <div data-answer-ref="ans-spanning"></div>
+    <div data-quiz="spanning"></div>
+  </section>
+
+  <section class="stack" aria-labelledby="h-q24-end">
+    <h2 id="h-q24-end">Q24 unit challenge</h2>
+    <div data-quiz-unit="q24" data-count="10" data-title="Q24 unit challenge"></div>
+    <p>15-mark practice: <a href="#ans-l-avl">AVL</a> · <a href="#ans-l-btree">B-tree</a> · <a href="#ans-l-hash">Hashing</a> · <a href="#ans-l-bst">BST</a>.</p>
+  </section>
+</article>

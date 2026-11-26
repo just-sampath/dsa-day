@@ -1,0 +1,63 @@
+<article class="view" id="scenarios" hidden>
+  <header class="page-head">
+    <p class="eyebrow"><span class="tag">Scenario questions</span> any unit, often worth 15 marks</p>
+    <h1>Scenario Lab</h1>
+    <p class="lede">A scenario question describes a real situation (a printer, a bank, a metro map) and asks which data structure or algorithm to use, and <b>why</b>. Nobody expects code here. They want the right choice and a clear reason. Learn the 4-step method once, then practise on 32 scenarios.</p>
+  </header>
+
+  <section class="lesson" id="scn-method" data-title="The 4-step method">
+    <div class="lesson-head"><p class="eyebrow">Step 1</p><h2>The 4-step method</h2></div>
+    <p class="idea">Every scenario answer is the same four moves: <mark>operations → data structure → why + complexity → why not the other</mark>.</p>
+    <ol class="steps">
+      <li><b>Spot the operations.</b> Underline the verbs in the question: <i>add</i>, <i>remove the oldest</i>, <i>undo the latest</i>, <i>find instantly</i>, <i>connect at least cost</i>, <i>fewest stops</i>.</li>
+      <li><b>Name the data structure</b> those operations point to. Use the table below.</li>
+      <li><b>Justify it</b> with its key property (LIFO, FIFO, O(1) lookup, balanced height, no cycles) and the <b>time complexity</b> of the main operation.</li>
+      <li><b>Reject one alternative</b> in one line (“A queue would undo the oldest change first”). Examiners love this line. Then draw a small diagram.</li>
+    </ol>
+    <div class="callout analogy"><p>It is like choosing a container in the kitchen. Soup goes in a bowl, not on a plate. You don’t need to know how the bowl was made. You only need to explain why a bowl suits soup.</p></div>
+    <div class="callout tip" data-t="Worked example"><p><b>Q: An editor needs Undo.</b><br>1. Operations: save each change, take back the most recent one.<br>2. Data structure: <mark>stack</mark>.<br>3. Why: undo removes the latest change first, which is LIFO; push and pop are O(1).<br>4. Why not a queue: it would undo the oldest change first.<br><i>Then draw a stack with three changes and an arrow at top.</i></p></div>
+  </section>
+
+  <section class="lesson" id="scn-table" data-title="Clue words to data structure">
+    <div class="lesson-head"><p class="eyebrow">Step 2</p><h2>Clue words → data structure</h2></div>
+    <p>Most scenario questions hide one of these clue phrases. Find the clue and you have the answer.</p>
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>If the question says…</th><th>Use</th><th>Because</th></tr></thead>
+      <tbody>
+        <tr><td>undo, back button, most recent first, reverse, brackets, recursion</td><td><b>Stack</b></td><td>LIFO, push/pop O(1)</td></tr>
+        <tr><td>first come first served, waiting line, printer, booking, BFS</td><td><b>Queue</b></td><td>FIFO, O(1) at both ends</td></tr>
+        <tr><td>take turns forever, fixed buffer, keep last N, round robin</td><td><b>Circular queue</b></td><td>(i + 1) % N reuses slots</td></tr>
+        <tr><td>emergency, priority, most urgent first</td><td><b>Priority queue</b></td><td>removal by priority</td></tr>
+        <tr><td>insert/delete in the middle often, size unknown, polynomial</td><td><b>Linked list</b></td><td>pointer changes, no shifting</td></tr>
+        <tr><td>previous and next, both directions, undo + redo</td><td><b>Doubly linked list</b></td><td>prev and next pointers</td></tr>
+        <tr><td>loop back to the start, repeat all, multiplayer turns</td><td><b>Circular linked list</b></td><td>last→next = head</td></tr>
+        <tr><td>fixed size, access by position or roll number</td><td><b>Array</b></td><td>O(1) random access</td></tr>
+        <tr><td>record with fields of different types</td><td><b>Structure</b></td><td>groups mixed types</td></tr>
+        <tr><td>size only known at run time</td><td><b>Dynamic memory</b> (malloc)</td><td>heap, exact size</td></tr>
+        <tr><td>find instantly by exact key (ID, name, ISBN)</td><td><b>Hash table</b></td><td>O(1) average</td></tr>
+        <tr><td>hierarchy: folders, organisation chart, family tree</td><td><b>Tree</b></td><td>parent–child links</td></tr>
+        <tr><td>fast search <i>and</i> sorted order, keys keep coming</td><td><b>AVL tree</b> (balanced BST)</td><td>O(log n), inorder sorted</td></tr>
+        <tr><td>millions of records on disk, database index</td><td><b>B-tree</b></td><td>short and wide: few disk reads</td></tr>
+        <tr><td>network, map, connections, friends</td><td><b>Graph</b></td><td>vertices + edges</td></tr>
+        <tr><td>fewest stops/hops, people 2 steps away, level by level</td><td><b>BFS</b></td><td>visits by distance</td></tr>
+        <tr><td>maze, explore fully, backtrack, detect a cycle</td><td><b>DFS</b></td><td>deep first, then backtrack</td></tr>
+        <tr><td>connect everything at least total cost, cables, pipelines</td><td><b>MST</b> (Prim’s / Kruskal’s)</td><td>n − 1 edges, minimum weight</td></tr>
+        <tr><td>dense graph, check an edge instantly</td><td><b>Adjacency matrix</b></td><td>O(1) check</td></tr>
+        <tr><td>huge sparse graph, list neighbours</td><td><b>Adjacency list</b></td><td>O(V + E) space</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout trap"><p>Don’t answer with only the name of a data structure. A bare “Stack” gets about a third of the marks. The <b>reason</b> and the <b>rejected alternative</b> earn the rest.</p></div>
+  </section>
+
+  <section class="lesson" id="scn-practice" data-title="Practise: 32 scenarios">
+    <div class="lesson-head"><p class="eyebrow">Step 3</p><h2>Practise: 32 scenarios</h2></div>
+    <p>Pick an answer to see whether it’s right and how to write it up. Solve 15 to earn the <b>Scenario Solver</b> badge. Filter by unit if you want to focus on one.</p>
+    <div data-scenarios></div>
+  </section>
+
+  <section class="lesson" id="scn-long" data-title="A full 15-mark scenario">
+    <div class="lesson-head"><p class="eyebrow">Step 4</p><h2>A full 15-mark scenario answer</h2></div>
+    <p>When a 15-mark question lists several requirements, answer each one with the 4-step method, put them in a summary table, and draw one small diagram per requirement. Here is a complete example to copy the shape of.</p>
+    <div data-answer-ref="ans-l-scenario"></div>
+  </section>
+</article>

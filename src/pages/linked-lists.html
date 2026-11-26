@@ -1,0 +1,724 @@
+<article class="view" id="linked-lists" hidden>
+  <header class="page-head">
+    <p class="eyebrow"><span class="tag">Q22 · 8 marks</span> also a favourite 15M</p>
+    <h1>Linked lists: singly, doubly, circular</h1>
+    <p class="lede">A linked list is a chain of little boxes, each one pointing to the next. You’ll see why that beats an array for inserting and deleting, and you’ll perform every operation yourself, pointer by pointer.</p>
+    <div class="snapshot">
+      <h2>Exam snapshot: what they ask</h2>
+      <ul>
+        <li><span class="m">8M</span><span>What is a singly linked list? Insert at beginning, end, and a given position. <a href="#ans-sll">Model answer</a></span></li>
+        <li><span class="m">8M</span><span>Delete from beginning, end, a given position; traverse; search. <a href="#ans-sll-del">Model answer</a></span></li>
+        <li><span class="m">8M</span><span>Doubly linked list with insertion and deletion. <a href="#ans-dll">Model answer</a></span></li>
+        <li><span class="m">8M</span><span>Circular linked list; compare SLL, DLL, CLL. <a href="#ans-cll">Model answer</a></span></li>
+        <li><span class="m">15M</span><span>Linked lists in full: all types and all operations. <a href="#ans-l-ll">Model answer</a></span></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- ============ 1. Why ============ -->
+  <section class="lesson" id="ll-intro" data-title="Why linked lists?">
+    <div class="lesson-head"><p class="eyebrow">Part 1</p><h2>Why do we need linked lists?</h2></div>
+    <p class="idea">A linked list is a chain of <mark>nodes</mark>, where each node stores <mark>data</mark> and the <mark>address of the next node</mark>.</p>
+    <div class="callout analogy">
+      <p>A <b>treasure hunt</b>. Each clue (node) has a message (data) and tells you where the next clue is hidden (the pointer). The clues can be anywhere in the city; they don’t need to sit side by side. You only need to know where the <b>first</b> clue is (that’s <b>head</b>). The last clue says “The end” (that’s <b>NULL</b>).</p>
+    </div>
+    <h3>The problem with arrays</h3>
+    <ul>
+      <li><b>Fixed size.</b> <code>int a[100]</code> stays 100 forever: wasted space or not enough.</li>
+      <li><b>Slow insert/delete in the middle.</b> To insert at position 2 you must shift every later element one place right. 1000 elements → up to 1000 shifts.</li>
+      <li>An array needs one <b>continuous</b> block of memory.</li>
+    </ul>
+    <p>A linked list fixes all three. Nodes are created with <code>malloc</code> only when needed, they can sit anywhere in memory, and inserting means changing <b>two pointers</b>, no shifting.</p>
+
+    <h3>The node</h3>
+    <p>Each node is a <b>structure</b> (from Q21) with two members. The second one is a pointer to the same kind of structure, which is why this is called a <em>self-referential structure</em>.</p>
+    <script type="text/plain" data-code="c" data-title="Node of a singly linked list">
+struct node {
+    int data;             //? The value stored in this node.
+    struct node *next;    //? Address of the next node. NULL in the last node.
+};
+struct node *head = NULL; //? head remembers the first node. NULL means the list is empty.
+</script>
+    <figure class="fig">
+      <div class="fig-box" data-fig="ll" data-mode="sll" data-vals="10 20 30 40"></div>
+      <figcaption class="cap">Draw nodes as two boxes: <b>[ data | next ]</b>. Arrow from each next box to the following node. Write <b>head</b> on the first and <b>NULL</b> after the last.</figcaption>
+    </figure>
+
+    <h3>Array vs linked list</h3>
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Array</th><th>Linked list</th></tr></thead>
+      <tbody>
+        <tr><td>Fixed size (static)</td><td>Grows and shrinks (dynamic)</td></tr>
+        <tr><td>Continuous memory</td><td>Nodes scattered anywhere, joined by pointers</td></tr>
+        <tr><td>Direct access: <code>a[i]</code> in O(1)</td><td>Must walk from head: O(n) to reach the i-th node</td></tr>
+        <tr><td>Insert/delete in middle: O(n) shifting</td><td>Insert/delete: change pointers, O(1) once you are there</td></tr>
+        <tr><td>No extra memory per element</td><td>Extra memory for the pointer in every node</td></tr>
+      </tbody>
+    </table></div>
+    <h3>Three types</h3>
+    <div class="grid-3">
+      <div class="card"><h4>Singly (SLL)</h4><p class="muted">Each node points to the <b>next</b> one only. Travel in one direction.</p></div>
+      <div class="card"><h4>Doubly (DLL)</h4><p class="muted">Each node points to <b>next</b> and <b>previous</b>. Travel both ways.</p></div>
+      <div class="card"><h4>Circular (CLL)</h4><p class="muted">The last node points back to the <b>first</b>. No NULL, it loops.</p></div>
+    </div>
+    <div data-quiz="ll-intro"></div>
+  </section>
+
+  <!-- ============ 2. SLL ============ -->
+  <section class="lesson" id="sll" data-title="Singly linked list">
+    <div class="lesson-head"><p class="eyebrow">Part 2</p><h2>Singly linked list: every operation</h2></div>
+    <p class="idea">Every operation is just <mark>moving a pointer called temp</mark> and <mark>re-pointing one or two arrows</mark>.</p>
+    <div class="callout tip"><p><b>The golden rule of insertion:</b> connect the new node to the list <b>first</b> (newNode→next = …), and only <b>then</b> change the old pointer. If you change the old pointer first, you lose the rest of the list. Try both orders in your head with the playground below.</p></div>
+    <div data-viz="ll-playground" data-mode="sll"></div>
+
+    <h3>Insertion algorithms</h3>
+    <div class="grid-3">
+      <div class="algo"><div class="algo-head">Insert at beginning <span class="pill ok">O(1)</span></div><ol>
+        <li>Create newNode, store the data.</li>
+        <li>newNode→next = head.</li>
+        <li>head = newNode.</li></ol></div>
+      <div class="algo"><div class="algo-head">Insert at end <span class="pill">O(n)</span></div><ol>
+        <li>Create newNode, data in, newNode→next = NULL.</li>
+        <li>If head == NULL: head = newNode, stop.</li>
+        <li>temp = head; while temp→next ≠ NULL: temp = temp→next.</li>
+        <li>temp→next = newNode.</li></ol></div>
+      <div class="algo"><div class="algo-head">Insert at position pos <span class="pill">O(n)</span></div><ol>
+        <li>If pos == 1, insert at beginning.</li>
+        <li>Create newNode.</li>
+        <li>temp = head; move temp forward pos − 2 times (it stops at node pos − 1).</li>
+        <li>newNode→next = temp→next.</li>
+        <li>temp→next = newNode.</li></ol></div>
+    </div>
+    <h3>Deletion algorithms</h3>
+    <div class="grid-3">
+      <div class="algo"><div class="algo-head">Delete from beginning <span class="pill ok">O(1)</span></div><ol>
+        <li>If head == NULL: “underflow”, stop.</li>
+        <li>temp = head.</li>
+        <li>head = head→next.</li>
+        <li>free(temp).</li></ol></div>
+      <div class="algo"><div class="algo-head">Delete from end <span class="pill">O(n)</span></div><ol>
+        <li>If head == NULL: stop. If only one node: free(head), head = NULL, stop.</li>
+        <li>temp = head; while temp→next→next ≠ NULL: temp = temp→next.</li>
+        <li>free(temp→next).</li>
+        <li>temp→next = NULL.</li></ol></div>
+      <div class="algo"><div class="algo-head">Delete at position pos <span class="pill">O(n)</span></div><ol>
+        <li>If pos == 1, delete from beginning.</li>
+        <li>temp = head; move it to node pos − 1.</li>
+        <li>del = temp→next.</li>
+        <li>temp→next = del→next.</li>
+        <li>free(del).</li></ol></div>
+    </div>
+    <h3>Traversal and search</h3>
+    <div class="grid-2">
+      <div class="algo"><div class="algo-head">Traverse (display) <span class="pill">O(n)</span></div><ol>
+        <li>temp = head.</li>
+        <li>While temp ≠ NULL: print temp→data; temp = temp→next.</li></ol></div>
+      <div class="algo"><div class="algo-head">Search for key <span class="pill">O(n)</span></div><ol>
+        <li>temp = head, pos = 1.</li>
+        <li>While temp ≠ NULL: if temp→data == key, report pos and stop; else temp = temp→next, pos++.</li>
+        <li>If the loop ends, the key is not found.</li></ol></div>
+    </div>
+    <div class="callout trap"><p>Forgetting the <b>empty list</b> case (head == NULL) and the <b>single node</b> case. Examiners look for them. Always write “If head == NULL, print underflow” as the first step of any delete.</p></div>
+
+    <div class="code-tabs" data-title="Singly linked list: all operations">
+<script type="text/plain" data-lang="c">
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node { int data; struct node *next; };
+struct node *head = NULL;
+
+struct node* create(int x) {
+    struct node *n = (struct node*) malloc(sizeof(struct node)); //? Ask the heap for one node.
+    n->data = x;
+    n->next = NULL;
+    return n;
+}
+
+void insertBegin(int x) {
+    struct node *n = create(x);
+    n->next = head;          //? Link the new node to the old first node FIRST...
+    head = n;                //? ...then move head.
+}
+
+void insertEnd(int x) {
+    struct node *n = create(x), *temp = head;
+    if (head == NULL) { head = n; return; }
+    while (temp->next != NULL) temp = temp->next;   //? Walk to the last node.
+    temp->next = n;
+}
+
+void insertAtPos(int x, int pos) {
+    if (pos == 1) { insertBegin(x); return; }
+    struct node *n = create(x), *temp = head;
+    for (int i = 1; i < pos - 1 && temp != NULL; i++) temp = temp->next; //? Stop at node pos-1.
+    if (temp == NULL) { printf("Invalid position\n"); free(n); return; }
+    n->next = temp->next;
+    temp->next = n;
+}
+
+void deleteBegin() {
+    if (head == NULL) { printf("Underflow\n"); return; }
+    struct node *temp = head;
+    head = head->next;
+    free(temp);
+}
+
+void deleteEnd() {
+    if (head == NULL) { printf("Underflow\n"); return; }
+    if (head->next == NULL) { free(head); head = NULL; return; }   //? Only one node.
+    struct node *temp = head;
+    while (temp->next->next != NULL) temp = temp->next;              //? Stop at second-last.
+    free(temp->next);
+    temp->next = NULL;
+}
+
+void deleteAtPos(int pos) {
+    if (head == NULL) { printf("Underflow\n"); return; }
+    if (pos == 1) { deleteBegin(); return; }
+    struct node *temp = head, *del;
+    for (int i = 1; i < pos - 1 && temp->next != NULL; i++) temp = temp->next;
+    del = temp->next;
+    if (del == NULL) { printf("Invalid position\n"); return; }
+    temp->next = del->next;   //? Skip over the node.
+    free(del);
+}
+
+void display() {
+    struct node *temp = head;
+    while (temp != NULL) { printf("%d -> ", temp->data); temp = temp->next; }
+    printf("NULL\n");
+}
+
+int search(int key) {
+    struct node *temp = head; int pos = 1;
+    while (temp != NULL) {
+        if (temp->data == key) return pos;
+        temp = temp->next; pos++;
+    }
+    return -1;   //? Not found.
+}
+
+int main() {
+    insertEnd(10); insertEnd(20); insertBegin(5); insertAtPos(15, 3);
+    display();                 // 5 -> 10 -> 15 -> 20 -> NULL
+    deleteAtPos(2); deleteEnd();
+    display();                 // 5 -> 15 -> NULL
+    printf("15 found at %d\n", search(15));
+    return 0;
+}
+</script>
+<script type="text/plain" data-lang="java">
+class Node {
+    int data; Node next;
+    Node(int d) { data = d; next = null; }
+}
+
+class SinglyLinkedList {
+    Node head = null;
+
+    void insertBegin(int x) { Node n = new Node(x); n.next = head; head = n; }
+
+    void insertEnd(int x) {
+        Node n = new Node(x);
+        if (head == null) { head = n; return; }
+        Node temp = head;
+        while (temp.next != null) temp = temp.next;
+        temp.next = n;
+    }
+
+    void insertAtPos(int x, int pos) {
+        if (pos == 1) { insertBegin(x); return; }
+        Node temp = head;
+        for (int i = 1; i < pos - 1 && temp != null; i++) temp = temp.next;
+        if (temp == null) { System.out.println("Invalid position"); return; }
+        Node n = new Node(x);
+        n.next = temp.next;
+        temp.next = n;
+    }
+
+    void deleteBegin() { if (head == null) System.out.println("Underflow"); else head = head.next; }
+
+    void deleteEnd() {
+        if (head == null) { System.out.println("Underflow"); return; }
+        if (head.next == null) { head = null; return; }
+        Node temp = head;
+        while (temp.next.next != null) temp = temp.next;
+        temp.next = null;   //? Java frees the removed node automatically.
+    }
+
+    void deleteAtPos(int pos) {
+        if (head == null) { System.out.println("Underflow"); return; }
+        if (pos == 1) { deleteBegin(); return; }
+        Node temp = head;
+        for (int i = 1; i < pos - 1 && temp.next != null; i++) temp = temp.next;
+        if (temp.next == null) { System.out.println("Invalid position"); return; }
+        temp.next = temp.next.next;
+    }
+
+    void display() {
+        for (Node t = head; t != null; t = t.next) System.out.print(t.data + " -> ");
+        System.out.println("NULL");
+    }
+
+    int search(int key) {
+        int pos = 1;
+        for (Node t = head; t != null; t = t.next, pos++) if (t.data == key) return pos;
+        return -1;
+    }
+
+    public static void main(String[] args) {
+        SinglyLinkedList l = new SinglyLinkedList();
+        l.insertEnd(10); l.insertEnd(20); l.insertBegin(5); l.insertAtPos(15, 3);
+        l.display();
+        l.deleteAtPos(2); l.deleteEnd();
+        l.display();
+    }
+}
+</script>
+<script type="text/plain" data-lang="python">
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None          #? None is Python's NULL.
+
+class SinglyLinkedList:
+    def __init__(self):
+        self.head = None
+
+    def insert_begin(self, x):
+        n = Node(x)
+        n.next = self.head
+        self.head = n
+
+    def insert_end(self, x):
+        n = Node(x)
+        if self.head is None:
+            self.head = n
+            return
+        temp = self.head
+        while temp.next:
+            temp = temp.next
+        temp.next = n
+
+    def insert_at_pos(self, x, pos):
+        if pos == 1:
+            return self.insert_begin(x)
+        temp = self.head
+        for _ in range(pos - 2):
+            if temp is None:
+                break
+            temp = temp.next
+        if temp is None:
+            print("Invalid position")
+            return
+        n = Node(x)
+        n.next = temp.next
+        temp.next = n
+
+    def delete_begin(self):
+        if self.head is None:
+            print("Underflow")
+        else:
+            self.head = self.head.next
+
+    def delete_end(self):
+        if self.head is None:
+            print("Underflow")
+        elif self.head.next is None:
+            self.head = None
+        else:
+            temp = self.head
+            while temp.next.next:
+                temp = temp.next
+            temp.next = None
+
+    def delete_at_pos(self, pos):
+        if self.head is None:
+            return print("Underflow")
+        if pos == 1:
+            return self.delete_begin()
+        temp = self.head
+        for _ in range(pos - 2):
+            if temp.next is None:
+                break
+            temp = temp.next
+        if temp.next is None:
+            return print("Invalid position")
+        temp.next = temp.next.next
+
+    def display(self):
+        temp, out = self.head, []
+        while temp:
+            out.append(str(temp.data))
+            temp = temp.next
+        print(" -> ".join(out) + " -> NULL")
+
+lst = SinglyLinkedList()
+for v in (10, 20):
+    lst.insert_end(v)
+lst.insert_begin(5)
+lst.insert_at_pos(15, 3)
+lst.display()   # 5 -> 10 -> 15 -> 20 -> NULL
+</script>
+    </div>
+    <div data-answer-ref="ans-sll ans-sll-del" data-label="Exam-ready answers"></div>
+    <div data-quiz="sll"></div>
+  </section>
+
+  <!-- ============ 3. DLL ============ -->
+  <section class="lesson" id="dll" data-title="Doubly linked list">
+    <div class="lesson-head"><p class="eyebrow">Part 3</p><h2>Doubly linked list (DLL)</h2></div>
+    <p class="idea">Each node has <mark>two pointers</mark>: <b>prev</b> to the node before it and <b>next</b> to the node after it.</p>
+    <div class="callout analogy"><p>A <b>train</b>. Every coach is coupled to the coach in front and the coach behind, so you can walk through it in either direction. A browser’s Back and Forward buttons work the same way.</p></div>
+    <script type="text/plain" data-code="c" data-title="Node of a doubly linked list">
+struct node {
+    struct node *prev;   //? Address of the previous node (NULL for the first node).
+    int data;
+    struct node *next;   //? Address of the next node (NULL for the last node).
+};
+</script>
+    <figure class="fig">
+      <div class="fig-box" data-fig="ll" data-mode="dll" data-vals="10 20 30"></div>
+      <figcaption class="cap">Draw three boxes per node: <b>[ prev | data | next ]</b>. Arrows go both ways between neighbours. The first prev and the last next are NULL.</figcaption>
+    </figure>
+    <div data-viz="ll-playground" data-mode="dll"></div>
+    <h3>Algorithms</h3>
+    <div class="grid-2">
+      <div class="algo"><div class="algo-head">Insert at beginning</div><ol>
+        <li>Create newNode; newNode→prev = NULL.</li>
+        <li>newNode→next = head.</li>
+        <li>If head ≠ NULL: head→prev = newNode.</li>
+        <li>head = newNode.</li></ol></div>
+      <div class="algo"><div class="algo-head">Insert at end</div><ol>
+        <li>Create newNode; newNode→next = NULL.</li>
+        <li>If head == NULL: newNode→prev = NULL, head = newNode, stop.</li>
+        <li>Walk temp to the last node.</li>
+        <li>temp→next = newNode.</li>
+        <li>newNode→prev = temp.</li></ol></div>
+      <div class="algo"><div class="algo-head">Insert after node temp (position pos)</div><ol>
+        <li>Walk temp to node pos − 1.</li>
+        <li>newNode→next = temp→next; newNode→prev = temp.</li>
+        <li>If temp→next ≠ NULL: temp→next→prev = newNode.</li>
+        <li>temp→next = newNode.</li></ol></div>
+      <div class="algo"><div class="algo-head">Delete node temp (any position)</div><ol>
+        <li>Walk temp to the node to delete.</li>
+        <li>If temp→prev ≠ NULL: temp→prev→next = temp→next, else head = temp→next.</li>
+        <li>If temp→next ≠ NULL: temp→next→prev = temp→prev.</li>
+        <li>free(temp).</li></ol></div>
+    </div>
+    <div class="grid-2">
+      <div class="callout tip" data-t="Advantages over SLL"><ul>
+        <li>Traverse in both directions.</li>
+        <li>Delete a node when you only have a pointer to it (you can reach the previous node through prev).</li>
+        <li>Insert before a given node easily.</li></ul></div>
+      <div class="callout trap" data-t="Disadvantages"><ul>
+        <li>Extra memory: one more pointer per node.</li>
+        <li>Every insert/delete must update <b>four</b> links instead of two, so more chances to make a mistake.</li></ul></div>
+    </div>
+    <div class="code-tabs" data-title="Doubly linked list">
+<script type="text/plain" data-lang="c">
+struct node { struct node *prev; int data; struct node *next; };
+struct node *head = NULL;
+
+void insertBegin(int x) {
+    struct node *n = malloc(sizeof(struct node));
+    n->data = x; n->prev = NULL; n->next = head;
+    if (head != NULL) head->prev = n;    //? The old first node now points back to n.
+    head = n;
+}
+
+void insertEnd(int x) {
+    struct node *n = malloc(sizeof(struct node)), *t = head;
+    n->data = x; n->next = NULL;
+    if (head == NULL) { n->prev = NULL; head = n; return; }
+    while (t->next != NULL) t = t->next;
+    t->next = n;
+    n->prev = t;
+}
+
+void deleteNode(struct node *t) {        //? Deletes node t wherever it is.
+    if (t->prev != NULL) t->prev->next = t->next; else head = t->next;
+    if (t->next != NULL) t->next->prev = t->prev;
+    free(t);
+}
+
+void displayBackward() {
+    struct node *t = head;
+    if (t == NULL) return;
+    while (t->next != NULL) t = t->next;         //? Go to the end...
+    while (t != NULL) { printf("%d ", t->data); t = t->prev; }   //? ...then walk back with prev.
+}
+</script>
+<script type="text/plain" data-lang="java">
+class DNode { int data; DNode prev, next; DNode(int d) { data = d; } }
+
+class DoublyLinkedList {
+    DNode head;
+
+    void insertBegin(int x) {
+        DNode n = new DNode(x);
+        n.next = head;
+        if (head != null) head.prev = n;
+        head = n;
+    }
+
+    void insertEnd(int x) {
+        DNode n = new DNode(x);
+        if (head == null) { head = n; return; }
+        DNode t = head;
+        while (t.next != null) t = t.next;
+        t.next = n;
+        n.prev = t;
+    }
+
+    void delete(DNode t) {
+        if (t.prev != null) t.prev.next = t.next; else head = t.next;
+        if (t.next != null) t.next.prev = t.prev;
+    }
+}
+</script>
+<script type="text/plain" data-lang="python">
+class DNode:
+    def __init__(self, data):
+        self.data, self.prev, self.next = data, None, None
+
+class DoublyLinkedList:
+    def __init__(self):
+        self.head = None
+
+    def insert_begin(self, x):
+        n = DNode(x)
+        n.next = self.head
+        if self.head:
+            self.head.prev = n
+        self.head = n
+
+    def insert_end(self, x):
+        n = DNode(x)
+        if not self.head:
+            self.head = n
+            return
+        t = self.head
+        while t.next:
+            t = t.next
+        t.next, n.prev = n, t
+
+    def delete(self, t):
+        if t.prev:
+            t.prev.next = t.next
+        else:
+            self.head = t.next
+        if t.next:
+            t.next.prev = t.prev
+</script>
+    </div>
+    <div data-answer-ref="ans-dll"></div>
+    <div data-quiz="dll"></div>
+  </section>
+
+  <!-- ============ 4. CLL ============ -->
+  <section class="lesson" id="cll" data-title="Circular linked list">
+    <div class="lesson-head"><p class="eyebrow">Part 4</p><h2>Circular linked list (CLL)</h2></div>
+    <p class="idea">The <mark>last node points back to the first</mark>, so the list forms a circle and has no NULL.</p>
+    <div class="callout analogy"><p>Players sitting in a circle playing a card game: after the last player, the turn goes back to the first. A music playlist on <b>repeat all</b> and the CPU giving each program a turn (<b>round robin</b>) work the same way.</p></div>
+    <figure class="fig">
+      <div class="fig-box" data-fig="ll" data-mode="cll" data-vals="10 20 30 40"></div>
+      <figcaption class="cap">Same nodes as an SLL, but the last next arrow curves back to the first node.</figcaption>
+    </figure>
+    <div class="callout trap"><p>Traversal can’t use <code>while (temp != NULL)</code>: there is no NULL, so it would loop forever. Stop when you get <b>back to head</b>: <code>do { print; temp = temp→next; } while (temp != head);</code></p></div>
+    <div data-viz="ll-playground" data-mode="cll"></div>
+    <h3>Algorithms</h3>
+    <div class="grid-2">
+      <div class="algo"><div class="algo-head">Insert at beginning</div><ol>
+        <li>Create newNode.</li>
+        <li>If head == NULL: newNode→next = newNode; head = newNode; stop.</li>
+        <li>Walk temp to the last node (temp→next == head).</li>
+        <li>newNode→next = head.</li>
+        <li>temp→next = newNode.</li>
+        <li>head = newNode.</li></ol></div>
+      <div class="algo"><div class="algo-head">Insert at end</div><ol>
+        <li>Create newNode.</li>
+        <li>If head == NULL: newNode→next = newNode; head = newNode; stop.</li>
+        <li>Walk temp to the last node.</li>
+        <li>temp→next = newNode.</li>
+        <li>newNode→next = head.</li></ol></div>
+      <div class="algo"><div class="algo-head">Delete from beginning</div><ol>
+        <li>If head == NULL: underflow, stop.</li>
+        <li>If head→next == head (one node): free(head); head = NULL; stop.</li>
+        <li>Walk last to the last node.</li>
+        <li>temp = head; head = head→next.</li>
+        <li>last→next = head.</li>
+        <li>free(temp).</li></ol></div>
+      <div class="algo"><div class="algo-head">Delete from end</div><ol>
+        <li>If empty or one node: as above.</li>
+        <li>Walk temp to the second-last node (temp→next→next == head).</li>
+        <li>free(temp→next).</li>
+        <li>temp→next = head.</li></ol></div>
+    </div>
+    <p><b>Circular doubly linked list:</b> a DLL where the last node’s next points to the first and the first node’s prev points to the last. You can loop in both directions.</p>
+    <div class="code-tabs" data-title="Circular linked list">
+<script type="text/plain" data-lang="c">
+struct node { int data; struct node *next; };
+struct node *head = NULL;
+
+void insertEnd(int x) {
+    struct node *n = malloc(sizeof(struct node)), *t = head;
+    n->data = x;
+    if (head == NULL) { n->next = n; head = n; return; }   //? A single node points to itself.
+    while (t->next != head) t = t->next;                    //? Stop at the last node.
+    t->next = n;
+    n->next = head;                                         //? Close the circle.
+}
+
+void insertBegin(int x) {
+    insertEnd(x);                     //? Trick: add at the end...
+    struct node *t = head;
+    while (t->next != head) t = t->next;
+    head = t;                         //? ...then make the new last node the head.
+}
+
+void deleteBegin() {
+    if (head == NULL) { printf("Underflow\n"); return; }
+    if (head->next == head) { free(head); head = NULL; return; }
+    struct node *last = head, *temp = head;
+    while (last->next != head) last = last->next;
+    head = head->next;
+    last->next = head;
+    free(temp);
+}
+
+void display() {
+    if (head == NULL) return;
+    struct node *t = head;
+    do { printf("%d -> ", t->data); t = t->next; } while (t != head);   //? do-while, not while(t != NULL).
+    printf("(back to %d)\n", head->data);
+}
+</script>
+<script type="text/plain" data-lang="java">
+class CircularLinkedList {
+    static class Node { int data; Node next; Node(int d) { data = d; } }
+    Node head;
+
+    void insertEnd(int x) {
+        Node n = new Node(x);
+        if (head == null) { n.next = n; head = n; return; }
+        Node t = head;
+        while (t.next != head) t = t.next;
+        t.next = n;
+        n.next = head;
+    }
+
+    void deleteBegin() {
+        if (head == null) { System.out.println("Underflow"); return; }
+        if (head.next == head) { head = null; return; }
+        Node last = head;
+        while (last.next != head) last = last.next;
+        head = head.next;
+        last.next = head;
+    }
+
+    void display() {
+        if (head == null) return;
+        Node t = head;
+        do { System.out.print(t.data + " -> "); t = t.next; } while (t != head);
+        System.out.println("(back to " + head.data + ")");
+    }
+}
+</script>
+<script type="text/plain" data-lang="python">
+class Node:
+    def __init__(self, data):
+        self.data, self.next = data, None
+
+class CircularLinkedList:
+    def __init__(self):
+        self.head = None
+
+    def insert_end(self, x):
+        n = Node(x)
+        if self.head is None:
+            n.next = n
+            self.head = n
+            return
+        t = self.head
+        while t.next is not self.head:
+            t = t.next
+        t.next, n.next = n, self.head
+
+    def delete_begin(self):
+        if self.head is None:
+            return print("Underflow")
+        if self.head.next is self.head:
+            self.head = None
+            return
+        last = self.head
+        while last.next is not self.head:
+            last = last.next
+        self.head = self.head.next
+        last.next = self.head
+
+    def display(self):
+        if self.head is None:
+            return
+        t, out = self.head, []
+        while True:
+            out.append(str(t.data))
+            t = t.next
+            if t is self.head:
+                break
+        print(" -> ".join(out), "-> (back to head)")
+</script>
+    </div>
+    <div data-answer-ref="ans-cll"></div>
+    <div data-quiz="cll"></div>
+  </section>
+
+  <!-- ============ 5. Compare ============ -->
+  <section class="lesson" id="ll-compare" data-title="Compare & apply">
+    <div class="lesson-head"><p class="eyebrow">Part 5</p><h2>SLL vs DLL vs CLL, and where they are used</h2></div>
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Feature</th><th>Singly</th><th>Doubly</th><th>Circular</th></tr></thead>
+      <tbody>
+        <tr><td>Pointers per node</td><td>1 (next)</td><td>2 (prev, next)</td><td>1 (next)</td></tr>
+        <tr><td>Direction</td><td>Forward only</td><td>Forward and backward</td><td>Forward, loops around</td></tr>
+        <tr><td>Last node’s next</td><td>NULL</td><td>NULL</td><td>head (first node)</td></tr>
+        <tr><td>Memory</td><td>Least</td><td>Most</td><td>Same as SLL</td></tr>
+        <tr><td>Delete a given node</td><td>Needs the previous node</td><td>Easy (has prev)</td><td>Needs the previous node</td></tr>
+        <tr><td>Typical use</td><td>Stacks, simple lists</td><td>Browser history, undo/redo</td><td>Round robin, playlists</td></tr>
+      </tbody>
+    </table></div>
+    <h3>Time complexity of linked list operations</h3>
+    <div class="table-wrap"><table class="t compact">
+      <thead><tr><th>Operation</th><th>Singly</th><th>Doubly (with tail pointer)</th></tr></thead>
+      <tbody>
+        <tr><td>Insert/delete at beginning</td><td class="mono">O(1)</td><td class="mono">O(1)</td></tr>
+        <tr><td>Insert at end</td><td class="mono">O(n)</td><td class="mono">O(1)</td></tr>
+        <tr><td>Insert/delete at position</td><td class="mono">O(n)</td><td class="mono">O(n)</td></tr>
+        <tr><td>Search / traverse</td><td class="mono">O(n)</td><td class="mono">O(n)</td></tr>
+      </tbody>
+    </table></div>
+    <h3>Applications of linked lists</h3>
+    <ul class="two-col-list">
+      <li>Implementing stacks and queues</li>
+      <li>Dynamic memory management (free-block lists)</li>
+      <li>Polynomial representation and addition</li>
+      <li>Adjacency lists for graphs (Q25)</li>
+      <li>Undo/redo and browser back/forward (DLL)</li>
+      <li>Music playlists on repeat, round-robin scheduling (CLL)</li>
+      <li>Hash table chaining (Q24)</li>
+      <li>Image viewers: next and previous photo (DLL)</li>
+    </ul>
+    <div class="grid-2">
+      <div class="callout tip" data-t="Advantages"><ul><li>Dynamic size, no waste</li><li>Fast insert/delete (no shifting)</li><li>No need for continuous memory</li></ul></div>
+      <div class="callout trap" data-t="Disadvantages"><ul><li>No direct access: reaching the i-th node is O(n)</li><li>Extra memory for pointers</li><li>Reverse traversal is hard in an SLL</li></ul></div>
+    </div>
+    <div data-quiz="ll-compare"></div>
+  </section>
+
+  <section class="stack" aria-labelledby="h-q22-end">
+    <h2 id="h-q22-end">Q22 unit challenge</h2>
+    <div data-quiz-unit="q22" data-count="8" data-title="Q22 unit challenge"></div>
+    <p>For a 15-mark question, read <a href="#ans-l-ll">Linked lists in full (15M)</a>.</p>
+  </section>
+</article>

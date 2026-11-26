@@ -1,0 +1,897 @@
+<article class="view" id="answers" hidden>
+  <header class="page-head">
+    <p class="eyebrow"><span class="tag">8M + 15M</span> written the way you write them in the answer sheet</p>
+    <h1>Answer Bank</h1>
+    <p class="lede">Every likely question with a model answer: headings, definitions, the diagram to draw, the steps, a worked example, and the comparison table. Switch any 8-mark answer to its <b>5-min version</b> for a quick revision pass. The <mark>highlighted words</mark> are the ones to underline in your answer sheet.</p>
+    <div class="callout tip" data-t="How to use this page tonight"><p>Read each answer once slowly, then close your eyes and say the headings in order. If you remember the headings and the diagram, the rest of the answer follows.</p></div>
+  </header>
+
+  <!-- ===================================== Q21 ===================================== -->
+  <section class="lesson" id="answers-q21" data-title="Q21 answers">
+    <div class="lesson-head"><p class="eyebrow">Q21 · 8 marks each</p><h2>Basics, structures, DMA, complexity</h2></div>
+
+    <article class="answer" id="ans-ds" data-q="Q21" data-m="8M" data-time="15 min">
+      <h4 class="answer-q">Define a data structure. Explain the classification of data structures with examples.</h4>
+      <h5>Definition</h5>
+      <p>A <mark>data structure</mark> is a way of <mark>organising and storing data</mark> in memory so that it can be <mark>accessed and modified efficiently</mark>. It defines both how data is arranged and which operations (insert, delete, search, traverse) can be performed on it.</p>
+      <h5>Classification</h5>
+      <div class="formula">Data Structures
+├── Primitive ── int, float, char, double, pointer
+└── Non-primitive
+    ├── Linear ──── Array, Linked list, Stack, Queue
+    └── Non-linear ─ Tree, Graph</div>
+      <ol>
+        <li><b>Primitive</b>: basic types provided by the language, holding a single value. Example: <code>int a = 5;</code></li>
+        <li><b>Non-primitive</b>: derived from primitive types, holding many values.
+          <ul>
+            <li><b>Linear</b>: elements are arranged in a sequence; each has a unique predecessor and successor. Examples: array, linked list, stack, queue.</li>
+            <li><b>Non-linear</b>: elements are arranged in a hierarchy or network. Examples: tree (hierarchy), graph (network).</li>
+          </ul></li>
+      </ol>
+      <div class="full-only stack">
+        <h5>Other ways to classify</h5>
+        <ul>
+          <li><b>Static vs dynamic</b>: size fixed at compile time (array) vs size changes at run time (linked list).</li>
+          <li><b>Homogeneous vs heterogeneous</b>: same type of elements (array) vs different types (structure).</li>
+        </ul>
+        <h5>Operations on data structures</h5>
+        <p>Traversing, searching, insertion, deletion, sorting and merging.</p>
+        <h5>Abstract Data Type</h5>
+        <p>An <mark>ADT</mark> specifies the data and the operations without the implementation. Example: Stack ADT = {push, pop, peek, isEmpty}, implementable with an array or a linked list.</p>
+        <h5>Need for data structures</h5>
+        <p>Efficient use of memory, faster search and update, easier handling of large data, and reusability.</p>
+      </div>
+      <h5>Conclusion</h5>
+      <p>Choosing the right data structure decides how fast and how memory-efficient a program is.</p>
+    </article>
+
+    <article class="answer" id="ans-struct" data-q="Q21" data-m="8M" data-time="15 min">
+      <h4 class="answer-q">What is a structure in C? Explain declaration, initialisation, accessing members, array of structures and pointer to structure with an example.</h4>
+      <h5>Definition</h5>
+      <p>A <mark>structure</mark> is a <mark>user-defined data type</mark> that groups variables of <mark>different data types</mark> under a single name. Each variable inside it is a <b>member</b>. It is declared with the keyword <code>struct</code>.</p>
+      <h5>1. Declaration</h5>
+      <div class="formula">struct student {
+    int roll;
+    char name[20];
+    float marks;
+};</div>
+      <p>This only creates a template; no memory is allocated until a variable is declared.</p>
+      <h5>2. Declaring variables and initialisation</h5>
+      <div class="formula">struct student s1;
+struct student s2 = {101, "Asha", 88.5};</div>
+      <h5>3. Accessing members (dot operator)</h5>
+      <div class="formula">s1.roll = 102;   s1.marks = 76.0;
+printf("%d %.1f", s1.roll, s1.marks);</div>
+      <div class="full-only stack">
+        <h5>4. Array of structures</h5>
+        <p>Stores records of many students: <code>struct student cls[60];</code> The i-th student’s marks are <code>cls[i].marks</code>.</p>
+        <h5>5. Pointer to structure (arrow operator)</h5>
+        <div class="formula">struct student *p = &amp;s1;
+p-&gt;marks = 90.0;      /* same as (*p).marks */</div>
+        <h5>Memory diagram</h5>
+        <div class="table-wrap"><table class="t compact"><thead><tr><th>roll (4 bytes)</th><th>name (20 bytes)</th><th>marks (4 bytes)</th></tr></thead><tbody><tr><td>102</td><td>"Ravi"</td><td>76.0</td></tr></tbody></table><p class="small muted" style="padding:6px 12px">sizeof(struct student) = 4 + 20 + 4 = 28 bytes (plus possible padding).</p></div>
+        <h5>Structure vs union</h5>
+        <div class="table-wrap"><table class="t compact"><thead><tr><th>Structure</th><th>Union</th></tr></thead><tbody>
+          <tr><td>Separate memory for each member</td><td>All members share one memory</td></tr>
+          <tr><td>Size = sum of members</td><td>Size = largest member</td></tr>
+          <tr><td>All members valid at once</td><td>Only one member valid at a time</td></tr></tbody></table></div>
+        <h5>Advantages</h5>
+        <p>Keeps related data together, models real-world records, and is the building block of linked lists and trees (self-referential structures).</p>
+      </div>
+    </article>
+
+    <article class="answer" id="ans-dma" data-q="Q21" data-m="8M" data-time="15 min">
+      <h4 class="answer-q">What is dynamic memory allocation? Explain malloc(), calloc(), realloc() and free() with syntax and examples.</h4>
+      <h5>Definition</h5>
+      <p><mark>Dynamic memory allocation</mark> is the process of <mark>allocating memory at run time</mark> from the <mark>heap</mark>, as much as the program needs. The functions are declared in <code>&lt;stdlib.h&gt;</code> and return a pointer to the allocated block (or <b>NULL</b> on failure).</p>
+      <h5>Static vs dynamic allocation</h5>
+      <div class="table-wrap"><table class="t compact"><thead><tr><th>Static</th><th>Dynamic</th></tr></thead><tbody>
+        <tr><td>Compile time</td><td>Run time</td></tr>
+        <tr><td>Fixed size</td><td>Size can change (realloc)</td></tr>
+        <tr><td>Stack memory, freed automatically</td><td>Heap memory, freed with free()</td></tr>
+        <tr><td>Example: int a[100];</td><td>Example: malloc(n * sizeof(int))</td></tr></tbody></table></div>
+      <h5>1. malloc()</h5>
+      <p>Allocates a single block of the given number of bytes. Contents are garbage.</p>
+      <div class="formula">ptr = (int *) malloc(n * sizeof(int));</div>
+      <h5>2. calloc()</h5>
+      <p>Allocates n blocks of the given size and initialises all bytes to zero.</p>
+      <div class="formula">ptr = (int *) calloc(n, sizeof(int));</div>
+      <h5>3. realloc()</h5>
+      <p>Changes the size of a previously allocated block, keeping the old contents.</p>
+      <div class="formula">ptr = (int *) realloc(ptr, 2 * n * sizeof(int));</div>
+      <h5>4. free()</h5>
+      <p>Releases the memory back to the heap.</p>
+      <div class="formula">free(ptr);  ptr = NULL;</div>
+      <div class="full-only stack">
+        <h5>malloc vs calloc</h5>
+        <div class="table-wrap"><table class="t compact"><thead><tr><th>malloc</th><th>calloc</th></tr></thead><tbody>
+          <tr><td>1 argument (total bytes)</td><td>2 arguments (count, size)</td></tr>
+          <tr><td>Garbage values</td><td>Initialised to 0</td></tr>
+          <tr><td>Faster</td><td>Slightly slower</td></tr></tbody></table></div>
+        <h5>Example</h5>
+        <div class="formula">int *a = (int *) malloc(5 * sizeof(int));
+if (a == NULL) { printf("Memory not available"); exit(1); }
+for (i = 0; i &lt; 5; i++) a[i] = i * 10;
+free(a);</div>
+        <h5>Problems to avoid</h5>
+        <ul>
+          <li><b>Memory leak</b>: allocated memory that is never freed and no longer reachable.</li>
+          <li><b>Dangling pointer</b>: a pointer still used after the memory is freed. Set it to NULL after free.</li>
+        </ul>
+        <h5>Advantages</h5>
+        <p>No wasted memory, size decided at run time, and it makes linked lists, trees and graphs possible.</p>
+      </div>
+    </article>
+
+    <article class="answer" id="ans-complexity" data-q="Q21" data-m="8M" data-time="16 min">
+      <h4 class="answer-q">Define time and space complexity. Explain asymptotic notations with examples.</h4>
+      <h5>Definitions</h5>
+      <p><mark>Time complexity</mark> is the amount of time an algorithm takes, expressed as the <mark>number of basic steps as a function of the input size n</mark>. <mark>Space complexity</mark> is the total memory it needs as a function of n: a fixed part (code, constants, simple variables) plus a variable part (arrays, recursion stack).</p>
+      <h5>Best, average and worst case (linear search)</h5>
+      <ul><li>Best: key at first position → 1 comparison → <b>Ω(1)</b>.</li><li>Average: about n/2 comparisons → <b>Θ(n)</b>.</li><li>Worst: key last or absent → n comparisons → <b>O(n)</b>.</li></ul>
+      <h5>Asymptotic notations</h5>
+      <ol>
+        <li><mark>Big-O (upper bound)</mark>: f(n) = O(g(n)) if there exist positive constants c and n₀ such that 0 ≤ f(n) ≤ c·g(n) for all n ≥ n₀. Describes the worst case. Example: 3n + 2 = O(n) (take c = 4, n₀ = 2).</li>
+        <li><mark>Omega (lower bound)</mark>: f(n) = Ω(g(n)) if f(n) ≥ c·g(n) for all n ≥ n₀. Describes the best case. Example: 3n + 2 = Ω(n) (c = 3).</li>
+        <li><mark>Theta (tight bound)</mark>: f(n) = Θ(g(n)) if c₁·g(n) ≤ f(n) ≤ c₂·g(n) for all n ≥ n₀. Example: 3n + 2 = Θ(n).</li>
+      </ol>
+      <figure class="fig full-only">
+        <div class="fig-box" style="padding:10px">
+          <svg class="asy" viewBox="0 0 660 190" role="img" aria-label="Graphs for Big-O, Omega and Theta">
+            <g transform="translate(10,10)"><path class="asy-axis" d="M20 150 H200 M20 150 V10"/><path class="asy-g" d="M20 140 C 80 120, 140 60, 200 15"/><path class="asy-f" d="M20 110 C 60 100, 90 110, 120 95 S 170 70, 200 55"/><path class="asy-n0" d="M92 150 V20"/><text x="200" y="12" class="asy-t">c·g(n)</text><text x="200" y="66" class="asy-t">f(n)</text><text x="86" y="168" class="asy-t">n₀</text><text x="110" y="185" class="asy-h">Big-O</text></g>
+            <g transform="translate(230,10)"><path class="asy-axis" d="M20 150 H200 M20 150 V10"/><path class="asy-f" d="M20 120 C 70 110, 120 60, 200 12"/><path class="asy-g" d="M20 105 C 70 112, 130 105, 200 80"/><path class="asy-n0" d="M80 150 V20"/><text x="200" y="10" class="asy-t">f(n)</text><text x="200" y="92" class="asy-t">c·g(n)</text><text x="74" y="168" class="asy-t">n₀</text><text x="110" y="185" class="asy-h">Omega</text></g>
+            <g transform="translate(450,10)"><path class="asy-axis" d="M20 150 H200 M20 150 V10"/><path class="asy-g" d="M20 130 C 80 110, 140 50, 200 12"/><path class="asy-f" d="M20 100 C 60 118, 120 90, 200 50"/><path class="asy-g2" d="M20 145 C 90 140, 150 115, 200 90"/><path class="asy-n0" d="M70 150 V20"/><text x="200" y="10" class="asy-t">c₂·g</text><text x="200" y="52" class="asy-t">f(n)</text><text x="200" y="96" class="asy-t">c₁·g</text><text x="64" y="168" class="asy-t">n₀</text><text x="110" y="185" class="asy-h">Theta</text></g>
+          </svg>
+        </div>
+      </figure>
+      <div class="full-only stack">
+        <h5>Common complexities</h5>
+        <p class="formula">O(1) &lt; O(log n) &lt; O(n) &lt; O(n log n) &lt; O(n²) &lt; O(n³) &lt; O(2ⁿ) &lt; O(n!)</p>
+        <h5>Example of analysis</h5>
+        <div class="formula">for i = 1 to n          → runs n times
+    for j = 1 to n      → runs n times for each i
+        sum = sum + 1   → total n × n = n²   ⇒ O(n²)</div>
+        <p>Linear search: O(n). Binary search: O(log n). Bubble sort: O(n²).</p>
+        <h5>Space complexity example</h5>
+        <p>Summing an array of n elements needs the array (n words) plus a few variables: S(n) = n + 3 → O(n).</p>
+      </div>
+      <h5>Conclusion</h5>
+      <p>Asymptotic analysis compares algorithms independent of the machine, by how they grow for large n.</p>
+    </article>
+  </section>
+
+  <!-- ===================================== Q22 ===================================== -->
+  <section class="lesson" id="answers-q22" data-title="Q22 answers">
+    <div class="lesson-head"><p class="eyebrow">Q22 · 8 marks each</p><h2>Linked lists</h2></div>
+
+    <article class="answer" id="ans-sll" data-q="Q22" data-m="8M" data-time="17 min">
+      <h4 class="answer-q">What is a singly linked list? Write algorithms to insert a node at the beginning, at the end and at a given position.</h4>
+      <h5>Definition</h5>
+      <p>A <mark>singly linked list</mark> is a <mark>linear, dynamic</mark> data structure made of <mark>nodes</mark>. Each node has two fields: <b>data</b> and <b>next</b>, the address of the next node. A pointer <mark>head</mark> points to the first node and the last node’s next is <mark>NULL</mark>.</p>
+      <div class="formula">struct node { int data; struct node *next; };</div>
+      <h5>Representation</h5>
+      <div class="fig-box" data-fig="ll" data-mode="sll" data-vals="10 20 30"></div>
+      <h5>1. Insert at the beginning</h5>
+      <ol class="steps"><li>Create newNode; newNode→data = x.</li><li>newNode→next = head.</li><li>head = newNode.</li></ol>
+      <div class="full-only"><p class="small muted">Before: head → 10 → 20 → 30 → NULL. After inserting 5: head → 5 → 10 → 20 → 30 → NULL.</p></div>
+      <h5>2. Insert at the end</h5>
+      <ol class="steps"><li>Create newNode; newNode→data = x; newNode→next = NULL.</li><li>If head == NULL, head = newNode and stop.</li><li>temp = head; while (temp→next ≠ NULL) temp = temp→next.</li><li>temp→next = newNode.</li></ol>
+      <h5>3. Insert at position pos</h5>
+      <ol class="steps"><li>If pos == 1, insert at the beginning and stop.</li><li>Create newNode with data x.</li><li>temp = head; repeat pos − 2 times: temp = temp→next (if temp becomes NULL, the position is invalid).</li><li>newNode→next = temp→next.</li><li>temp→next = newNode.</li></ol>
+      <div class="fig-box full-only" data-fig="ll" data-mode="sll" data-vals="10 15 20 30"></div>
+      <p class="full-only small muted">After inserting 15 at position 2 in 10 → 20 → 30.</p>
+      <div class="full-only stack">
+        <h5>Array vs linked list</h5>
+        <div class="table-wrap"><table class="t compact"><thead><tr><th>Array</th><th>Linked list</th></tr></thead><tbody>
+          <tr><td>Fixed size</td><td>Dynamic size</td></tr><tr><td>Contiguous memory</td><td>Scattered nodes linked by pointers</td></tr>
+          <tr><td>Random access O(1)</td><td>Sequential access O(n)</td></tr><tr><td>Insert/delete needs shifting</td><td>Insert/delete by changing links</td></tr></tbody></table></div>
+        <h5>Complexity</h5>
+        <p>Insert at beginning O(1); at end O(n); at position O(n).</p>
+        <h5>Applications</h5>
+        <p>Implementing stacks and queues, polynomial arithmetic, adjacency lists, dynamic memory management.</p>
+      </div>
+    </article>
+
+    <article class="answer" id="ans-sll-del" data-q="Q22" data-m="8M" data-time="17 min">
+      <h4 class="answer-q">Write algorithms to delete a node from the beginning, the end and a given position of a singly linked list. Also give algorithms to traverse and search.</h4>
+      <h5>1. Delete from the beginning</h5>
+      <ol class="steps"><li>If head == NULL, print “Underflow” and stop.</li><li>temp = head.</li><li>head = head→next.</li><li>free(temp).</li></ol>
+      <h5>2. Delete from the end</h5>
+      <ol class="steps"><li>If head == NULL, print “Underflow” and stop.</li><li>If head→next == NULL: free(head); head = NULL; stop.</li><li>temp = head; while (temp→next→next ≠ NULL) temp = temp→next.</li><li>free(temp→next); temp→next = NULL.</li></ol>
+      <h5>3. Delete at position pos</h5>
+      <ol class="steps"><li>If pos == 1, delete from the beginning.</li><li>temp = head; move temp to node pos − 1.</li><li>del = temp→next.</li><li>temp→next = del→next.</li><li>free(del).</li></ol>
+      <div class="fig-box" data-fig="ll" data-mode="sll" data-vals="10 30 40"></div>
+      <p class="small muted">After deleting position 2 (20) from 10 → 20 → 30 → 40: node 10 now points to 30.</p>
+      <h5>4. Traversal</h5>
+      <ol class="steps"><li>temp = head.</li><li>While temp ≠ NULL: print temp→data; temp = temp→next.</li></ol>
+      <h5>5. Search for key</h5>
+      <ol class="steps"><li>temp = head; pos = 1.</li><li>While temp ≠ NULL: if temp→data == key, print “found at pos” and stop; else temp = temp→next, pos = pos + 1.</li><li>Print “not found”.</li></ol>
+      <div class="full-only stack">
+        <h5>Complexity</h5>
+        <p>Delete at beginning O(1); end O(n); position O(n); traversal and search O(n).</p>
+        <h5>Important points</h5>
+        <p>Always handle the empty list and the single-node list; free the deleted node to avoid a memory leak.</p>
+      </div>
+    </article>
+
+    <article class="answer" id="ans-dll" data-q="Q22" data-m="8M" data-time="16 min">
+      <h4 class="answer-q">Explain a doubly linked list with insertion and deletion operations. What are its advantages over a singly linked list?</h4>
+      <h5>Definition</h5>
+      <p>A <mark>doubly linked list</mark> is a linked list in which every node has <mark>three fields</mark>: <b>prev</b> (address of the previous node), <b>data</b>, and <b>next</b> (address of the next node). It can be traversed in <mark>both directions</mark>.</p>
+      <div class="formula">struct node { struct node *prev; int data; struct node *next; };</div>
+      <div class="fig-box" data-fig="ll" data-mode="dll" data-vals="10 20 30"></div>
+      <h5>Insert at the beginning</h5>
+      <ol class="steps"><li>Create newNode; newNode→prev = NULL; newNode→next = head.</li><li>If head ≠ NULL: head→prev = newNode.</li><li>head = newNode.</li></ol>
+      <h5>Insert at the end</h5>
+      <ol class="steps"><li>Create newNode; newNode→next = NULL.</li><li>If head == NULL: newNode→prev = NULL; head = newNode; stop.</li><li>Move temp to the last node.</li><li>temp→next = newNode; newNode→prev = temp.</li></ol>
+      <div class="full-only stack">
+        <h5>Insert after a node (position pos)</h5>
+        <ol class="steps"><li>Move temp to node pos − 1.</li><li>newNode→next = temp→next; newNode→prev = temp.</li><li>If temp→next ≠ NULL: temp→next→prev = newNode.</li><li>temp→next = newNode.</li></ol>
+      </div>
+      <h5>Delete a node (temp)</h5>
+      <ol class="steps"><li>If temp→prev ≠ NULL: temp→prev→next = temp→next; else head = temp→next.</li><li>If temp→next ≠ NULL: temp→next→prev = temp→prev.</li><li>free(temp).</li></ol>
+      <h5>Advantages over SLL</h5>
+      <ul><li>Traversal in both directions.</li><li>A node can be deleted using only its own pointer.</li><li>Inserting before a given node is easy.</li></ul>
+      <div class="full-only stack">
+        <h5>Disadvantages</h5>
+        <ul><li>Extra memory for the prev pointer.</li><li>More pointer updates per operation.</li></ul>
+        <h5>Applications</h5>
+        <p>Browser back/forward, undo/redo, music players (next/previous), LRU caches.</p>
+      </div>
+    </article>
+
+    <article class="answer" id="ans-cll" data-q="Q22" data-m="8M" data-time="16 min">
+      <h4 class="answer-q">What is a circular linked list? Explain insertion and deletion. Compare singly, doubly and circular linked lists.</h4>
+      <h5>Definition</h5>
+      <p>A <mark>circular linked list</mark> is a linked list in which the <mark>last node points back to the first node</mark> instead of NULL, so the nodes form a circle. Any node can be the starting point.</p>
+      <div class="fig-box" data-fig="ll" data-mode="cll" data-vals="10 20 30 40"></div>
+      <h5>Traversal</h5>
+      <ol class="steps"><li>If head == NULL, stop.</li><li>temp = head.</li><li>Do: print temp→data; temp = temp→next; while (temp ≠ head).</li></ol>
+      <h5>Insert at the end</h5>
+      <ol class="steps"><li>Create newNode.</li><li>If head == NULL: newNode→next = newNode; head = newNode; stop.</li><li>Move temp to the last node (temp→next == head).</li><li>temp→next = newNode; newNode→next = head.</li></ol>
+      <h5>Insert at the beginning</h5>
+      <p>Same as insert at end, then <b>head = newNode</b>.</p>
+      <h5>Delete from the beginning</h5>
+      <ol class="steps"><li>If head == NULL: underflow. If head→next == head: free(head), head = NULL.</li><li>Move last to the last node.</li><li>temp = head; head = head→next; last→next = head.</li><li>free(temp).</li></ol>
+      <div class="full-only stack">
+        <h5>Delete from the end</h5>
+        <ol class="steps"><li>Move temp to the second-last node (temp→next→next == head).</li><li>free(temp→next); temp→next = head.</li></ol>
+      </div>
+      <h5>Comparison</h5>
+      <div class="table-wrap"><table class="t compact"><thead><tr><th>Feature</th><th>SLL</th><th>DLL</th><th>CLL</th></tr></thead><tbody>
+        <tr><td>Pointers/node</td><td>1</td><td>2</td><td>1</td></tr>
+        <tr><td>Traversal</td><td>Forward</td><td>Both ways</td><td>Forward, circular</td></tr>
+        <tr><td>Last node</td><td>NULL</td><td>NULL</td><td>Points to head</td></tr>
+        <tr><td>Memory</td><td>Least</td><td>Most</td><td>Same as SLL</td></tr>
+        <tr><td>Use</td><td>Stack, simple lists</td><td>Undo/redo, browser</td><td>Round robin, playlists</td></tr></tbody></table></div>
+      <h5>Applications of CLL</h5>
+      <p>Round-robin CPU scheduling, multiplayer games (turns), repeating playlists, circular buffers.</p>
+    </article>
+  </section>
+
+  <!-- ===================================== Q23 ===================================== -->
+  <section class="lesson" id="answers-q23" data-title="Q23 answers">
+    <div class="lesson-head"><p class="eyebrow">Q23 · 8 marks each</p><h2>Stacks and queues</h2></div>
+
+    <article class="answer" id="ans-stack" data-q="Q23" data-m="8M" data-time="15 min">
+      <h4 class="answer-q">What is a stack? Explain the push and pop operations using an array, with overflow and underflow conditions. List its applications.</h4>
+      <h5>Definition</h5>
+      <p>A <mark>stack</mark> is a <mark>linear data structure</mark> in which insertion and deletion take place at <mark>only one end, called the top</mark>. It follows <mark>LIFO</mark> (Last In, First Out). Example: a pile of plates.</p>
+      <div data-fig="stack" data-vals="10 20 30" data-max="5"></div>
+      <h5>Operations</h5>
+      <p><b>push(x)</b> inserts at top, <b>pop()</b> removes from top, <b>peek()</b> returns the top, <b>isEmpty()</b>, <b>isFull()</b>. All are O(1).</p>
+      <h5>Array implementation (stack[MAX], top = −1 initially)</h5>
+      <p><b>PUSH(x)</b></p>
+      <ol class="steps"><li>If top == MAX − 1: print “Stack Overflow”, stop.</li><li>top = top + 1.</li><li>stack[top] = x.</li></ol>
+      <p><b>POP()</b></p>
+      <ol class="steps"><li>If top == −1: print “Stack Underflow”, stop.</li><li>x = stack[top].</li><li>top = top − 1; return x.</li></ol>
+      <h5>Overflow and underflow</h5>
+      <ul><li><mark>Overflow</mark>: push on a full stack (top == MAX − 1).</li><li><mark>Underflow</mark>: pop on an empty stack (top == −1).</li></ul>
+      <div class="full-only stack">
+        <h5>Example</h5>
+        <p>push(10), push(20), push(30) → stack = [10, 20, 30], top = 2. pop() returns 30 → top = 1.</p>
+        <h5>Linked list implementation</h5>
+        <p>push = insert at beginning, pop = delete from beginning; head acts as top. No overflow until memory runs out.</p>
+      </div>
+      <h5>Applications</h5>
+      <p>Function calls and recursion, undo, browser back, balanced parentheses, infix to postfix conversion, postfix evaluation, reversing data, backtracking.</p>
+    </article>
+
+    <article class="answer" id="ans-queue-cq" data-q="Q23" data-m="8M" data-time="17 min">
+      <h4 class="answer-q">What is a queue? What is the drawback of a linear queue? Explain a circular queue with insertion and deletion algorithms and an example.</h4>
+      <h5>Queue</h5>
+      <p>A <mark>queue</mark> is a linear data structure where insertion happens at the <mark>rear</mark> and deletion at the <mark>front</mark>. It follows <mark>FIFO</mark> (First In, First Out). Example: a ticket counter line.</p>
+      <div data-fig="queue" data-size="5" data-vals="10 20 30 _ _" data-front="0" data-rear="2"></div>
+      <h5>Drawback of a linear queue</h5>
+      <p>In an array queue, rear only moves forward. After some deletions, the slots at the front become empty, but when rear == MAX − 1 the queue reports <b>overflow</b> even though space is free. That space is <mark>wasted</mark>.</p>
+      <div data-fig="queue" data-size="5" data-vals="_ _ 30 40 50" data-front="2" data-rear="4"></div>
+      <p class="small muted">front = 2, rear = 4: “full”, yet slots 0 and 1 are empty.</p>
+      <h5>Circular queue</h5>
+      <p>A <mark>circular queue</mark> connects the last position back to the first, using <mark>(index + 1) % SIZE</mark>, so empty slots are reused. <b>Full</b>: (rear + 1) % SIZE == front. <b>Empty</b>: front == −1.</p>
+      <p><b>ENQUEUE(x)</b></p>
+      <ol class="steps"><li>If (rear + 1) % SIZE == front: “Overflow”, stop.</li><li>If front == −1: front = rear = 0; else rear = (rear + 1) % SIZE.</li><li>queue[rear] = x.</li></ol>
+      <p><b>DEQUEUE()</b></p>
+      <ol class="steps"><li>If front == −1: “Underflow”, stop.</li><li>x = queue[front].</li><li>If front == rear: front = rear = −1; else front = (front + 1) % SIZE.</li><li>Return x.</li></ol>
+      <h5>Example (SIZE = 5)</h5>
+      <div data-trace="cqueue" data-size="5" data-ops="E10 E20 E30 E40 E50 D D E60 E70"></div>
+      <div class="full-only stack">
+        <h5>Advantages</h5>
+        <p>No wasted space, efficient use of a fixed array, all operations O(1).</p>
+        <h5>Applications</h5>
+        <p>CPU round-robin scheduling, traffic signal systems, keyboard and streaming buffers, printer spooling.</p>
+      </div>
+    </article>
+
+    <article class="answer" id="ans-paren" data-q="Q23" data-m="8M" data-time="14 min">
+      <h4 class="answer-q">Write an algorithm to check whether the parentheses in an expression are balanced using a stack. Trace it for {[()]} and ([)].</h4>
+      <h5>Idea</h5>
+      <p>The last bracket opened must be the first one closed. This is <mark>LIFO</mark>, so a <mark>stack</mark> is used.</p>
+      <h5>Algorithm</h5>
+      <ol class="steps"><li>Initialise an empty stack.</li><li>Scan the expression from left to right.</li><li>If the symbol is an opening bracket (, [ or {, push it.</li><li>If it is a closing bracket: if the stack is empty → not balanced; else pop, and if the popped bracket does not match → not balanced.</li><li>After the scan: stack empty → <mark>balanced</mark>; otherwise → <mark>not balanced</mark>.</li></ol>
+      <h5>Trace 1: {[()]}</h5>
+      <div data-trace="brackets" data-input="{[()]}"></div>
+      <h5>Trace 2: ([)]</h5>
+      <div data-trace="brackets" data-input="([)]"></div>
+      <div class="full-only stack">
+        <h5>Cases of imbalance</h5>
+        <ul><li>Mismatched type: ([)]</li><li>Extra closing bracket: a+b)</li><li>Unclosed opening bracket: ((a+b)</li></ul>
+        <h5>Complexity</h5>
+        <p>O(n) time, O(n) space for the stack in the worst case. Used by compilers to check syntax.</p>
+      </div>
+    </article>
+
+    <article class="answer" id="ans-infix" data-q="Q23" data-m="8M" data-time="18 min">
+      <h4 class="answer-q">Write an algorithm to convert an infix expression to postfix using a stack. Convert A + B * (C ^ D − E) ^ (F + G * H) − I.</h4>
+      <h5>Notations</h5>
+      <p><b>Infix</b>: operator between operands (A + B). <b>Prefix</b>: operator before (+ A B). <b>Postfix</b>: operator after (A B +). Postfix needs <mark>no brackets and no precedence rules</mark> to evaluate, so computers prefer it.</p>
+      <h5>Precedence</h5>
+      <p><b>^</b> (highest, right to left) &gt; <b>* / %</b> (left to right) &gt; <b>+ −</b> (lowest, left to right).</p>
+      <h5>Algorithm</h5>
+      <ol class="steps">
+        <li>Scan the infix expression from left to right.</li>
+        <li>If the symbol is an <b>operand</b>, add it to postfix.</li>
+        <li>If it is <b>(</b>, push it onto the stack.</li>
+        <li>If it is <b>)</b>, pop and add to postfix until ( is found; discard both brackets.</li>
+        <li>If it is an <b>operator</b>: while the stack top is an operator of <b>higher</b> precedence (or <b>equal</b> precedence and the scanned operator is left-associative), pop it to postfix. Then push the scanned operator.</li>
+        <li>At the end, pop all remaining operators to postfix.</li>
+      </ol>
+      <h5>Conversion table</h5>
+      <div data-trace="infix" data-input="A+B*(C^D-E)^(F+G*H)-I" data-no-action></div>
+      <div class="full-only stack">
+        <h5>Evaluating a postfix expression</h5>
+        <ol class="steps"><li>Scan left to right.</li><li>Operand → push.</li><li>Operator → pop B, pop A, push A op B.</li><li>The final value on the stack is the result.</li></ol>
+        <div data-trace="postfix-eval" data-input="5 3 + 8 2 - *"></div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ===================================== Q24 ===================================== -->
+  <section class="lesson" id="answers-q24" data-title="Q24 answers">
+    <div class="lesson-head"><p class="eyebrow">Q24 · 8 marks each</p><h2>Trees, AVL, B-trees, hashing, spanning trees</h2></div>
+
+    <article class="answer" id="ans-tree-basics" data-q="Q24" data-m="8M" data-time="15 min">
+      <h4 class="answer-q">Define a tree. Explain tree terminology, types of binary trees and their representation.</h4>
+      <h5>Definition</h5>
+      <p>A <mark>tree</mark> is a <mark>non-linear, hierarchical</mark> data structure consisting of nodes connected by edges, with one special node called the <mark>root</mark>; the remaining nodes form disjoint subtrees. A tree with n nodes has n − 1 edges and no cycles.</p>
+      <div class="fig-box" data-fig="tree" data-keys="50 30 70 20 40 60 80"></div>
+      <h5>Terminology (for the tree above)</h5>
+      <ul>
+        <li><b>Root</b>: 50. <b>Leaves</b>: 20, 40, 60, 80. <b>Internal nodes</b>: 50, 30, 70.</li>
+        <li><b>Parent/child</b>: 30 is the parent of 20 and 40. <b>Siblings</b>: 20 and 40.</li>
+        <li><b>Degree</b> of a node: number of children (degree of 30 = 2).</li>
+        <li><b>Level/depth</b>: edges from the root (50 at level 0, 30 at level 1). <b>Height</b> of the tree: 2.</li>
+        <li><b>Ancestors</b> of 40: 30, 50. <b>Subtree</b>: a node with all its descendants.</li>
+      </ul>
+      <h5>Binary tree and its types</h5>
+      <p>A <mark>binary tree</mark> is a tree in which every node has at most two children (left and right).</p>
+      <ul><li><b>Full/strict</b>: every node has 0 or 2 children.</li><li><b>Complete</b>: all levels full except the last, filled from the left.</li><li><b>Perfect</b>: all internal nodes have 2 children and all leaves are at the same level.</li><li><b>Skewed</b>: every node has only a left (or only a right) child.</li></ul>
+      <div class="full-only stack">
+        <h5>Properties</h5>
+        <p>Maximum nodes at level i = 2<sup>i</sup>; maximum nodes in a tree of height h = 2<sup>h+1</sup> − 1; minimum height with n nodes = ⌈log₂(n+1)⌉ − 1.</p>
+        <h5>Representation</h5>
+        <p><b>Array</b>: root at index 0; children of i at 2i + 1 and 2i + 2; parent at ⌊(i − 1)/2⌋. Efficient for complete trees.</p>
+        <p><b>Linked</b>: each node is a structure <code>[left | data | right]</code>; NULL for a missing child. Works for any shape.</p>
+        <h5>Applications</h5>
+        <p>File systems, organisation charts, expression trees, searching (BST), databases (B-trees).</p>
+      </div>
+    </article>
+
+    <article class="answer" id="ans-bst" data-q="Q24" data-m="8M" data-time="18 min">
+      <h4 class="answer-q">What is a binary search tree? Construct a BST for 45, 15, 79, 90, 10, 55, 12, 20, 50 and write its traversals. Explain deletion.</h4>
+      <h5>Definition</h5>
+      <p>A <mark>binary search tree</mark> is a binary tree in which, for every node, all keys in the <mark>left subtree are smaller</mark> and all keys in the <mark>right subtree are larger</mark> than the node’s key.</p>
+      <h5>Construction</h5>
+      <p>Insert each key starting from the root: go left if smaller, right if larger, and attach it at the first empty position.</p>
+      <div class="full-only"><div data-trace="bst" data-keys="45 15 79 90 10 55 12 20 50"></div></div>
+      <div class="fig-box" data-fig="tree" data-keys="45 15 79 90 10 55 12 20 50"></div>
+      <h5>Traversals</h5>
+      <ul><li><b>Preorder</b>: 45 15 10 12 20 79 55 50 90</li><li><b>Inorder</b>: 10 12 15 20 45 50 55 79 90 (sorted)</li><li><b>Postorder</b>: 12 10 20 15 50 55 90 79 45</li></ul>
+      <h5>Deletion: three cases</h5>
+      <ol><li><b>Leaf node</b> (e.g. 20): remove it directly.</li><li><b>One child</b> (e.g. 10, child 12): link 10’s parent directly to 12.</li><li><b>Two children</b> (e.g. 45): replace it with its <mark>inorder successor</mark> (50, the smallest in the right subtree), then delete the successor.</li></ol>
+      <div class="full-only stack">
+        <div class="fig-box" data-fig="tree" data-keys="45 15 79 90 10 55 12 20 50" data-del="20 10 45"></div>
+        <p class="small muted">After deleting 20, 10 and 45.</p>
+        <h5>Complexity</h5>
+        <p>Search, insert, delete: O(h). O(log n) when balanced, O(n) when skewed.</p>
+      </div>
+    </article>
+
+    <article class="answer" id="ans-construct" data-q="Q24" data-m="8M" data-time="15 min">
+      <h4 class="answer-q">Construct a binary tree from the inorder D B E A F C and the preorder A B D E C F traversals.</h4>
+      <h5>Principle</h5>
+      <p>The <mark>first element of preorder is the root</mark>. Its position in the <mark>inorder</mark> sequence divides the remaining elements into the <mark>left and right subtrees</mark>. Repeat recursively.</p>
+      <h5>Steps</h5>
+      <div data-trace="treebuild" data-in="D B E A F C" data-pre="A B D E C F"></div>
+      <h5>Final tree</h5>
+      <div class="fig-box" data-fig="tree-in" data-in="D B E A F C" data-pre="A B D E C F"></div>
+      <h5>Verification</h5>
+      <p>Postorder of this tree: <b>D E B F C A</b>. Its inorder matches the given D B E A F C.</p>
+      <div class="full-only stack">
+        <h5>Inorder + postorder</h5>
+        <p>Same method, but the root is the <b>last</b> element of postorder and the right subtree is built before the left.</p>
+        <h5>Note</h5>
+        <p>Inorder is essential: preorder + postorder alone do not identify a unique binary tree.</p>
+      </div>
+    </article>
+
+    <article class="answer" id="ans-avl" data-q="Q24" data-m="8M" data-time="18 min">
+      <h4 class="answer-q">What is an AVL tree? Explain the rotations. Construct an AVL tree for 10, 20, 30, 25, 28, 27.</h4>
+      <h5>Definition</h5>
+      <p>An <mark>AVL tree</mark> is a <mark>height-balanced binary search tree</mark> in which the <mark>balance factor</mark> of every node is −1, 0 or +1, where <b>BF = height(left subtree) − height(right subtree)</b>. If an insertion makes any BF ±2, the tree is rebalanced by rotations.</p>
+      <h5>Rotations</h5>
+      <ul>
+        <li><b>LL</b> (inserted in the left subtree of the left child): single <b>right</b> rotation.</li>
+        <li><b>RR</b> (right subtree of the right child): single <b>left</b> rotation.</li>
+        <li><b>LR</b> (right subtree of the left child): left rotation at the child, then right rotation.</li>
+        <li><b>RL</b> (left subtree of the right child): right rotation at the child, then left rotation.</li>
+      </ul>
+      <div class="full-only grid-2">
+        <div><b>LL → right rotation</b><div data-trace="avl" data-keys="30 20 10" data-last="2"></div></div>
+        <div><b>RR → left rotation</b><div data-trace="avl" data-keys="10 20 30" data-last="2"></div></div>
+      </div>
+      <h5>Construction of 10, 20, 30, 25, 28, 27</h5>
+      <div data-trace="avl" data-keys="10 20 30 25 28 27"></div>
+      <p>Rotations used: <b>RR</b> at 10 (insert 30), <b>LR</b> at 30 (insert 28), <b>RL</b> at 20 (insert 27). Final level order: 25 20 28 10 27 30.</p>
+      <div class="full-only stack">
+        <h5>Advantage</h5>
+        <p>Height stays O(log n), so search, insert and delete are always <b>O(log n)</b>, unlike a skewed BST.</p>
+      </div>
+    </article>
+
+    <article class="answer" id="ans-btree" data-q="Q24" data-m="8M" data-time="18 min">
+      <h4 class="answer-q">What is a B-tree? State its properties and construct a B-tree of order 3 by inserting 10, 20, 30, 40, 50, 60, 70, 80, 90.</h4>
+      <h5>Definition</h5>
+      <p>A <mark>B-tree of order m</mark> is a <mark>balanced multi-way search tree</mark> in which each node can contain several keys and children, and <mark>all leaves are at the same level</mark>. It is used for data stored on disk.</p>
+      <h5>Properties</h5>
+      <ol>
+        <li>Each node has at most <b>m</b> children and at most <b>m − 1</b> keys.</li>
+        <li>Each internal node except the root has at least <b>⌈m/2⌉</b> children.</li>
+        <li>The root has at least 2 children if it is not a leaf.</li>
+        <li>All leaves are at the same level.</li>
+        <li>Keys in each node are sorted; a node with k keys has k + 1 children.</li>
+      </ol>
+      <h5>Insertion</h5>
+      <p>Insert into the correct leaf in sorted order. If the node overflows (m keys), split it: the <mark>median key moves up</mark> to the parent and the rest form two nodes. Splits may propagate up to the root, creating a new root.</p>
+      <h5>Construction (order 3: max 2 keys per node)</h5>
+      <div data-trace="btree" data-order="3" data-keys="10 20 30 40 50 60 70 80 90"></div>
+      <div class="full-only stack">
+        <h5>Applications</h5>
+        <p>Database indexing and file systems: a short, wide tree means very few disk reads. Search, insert and delete are O(log n).</p>
+      </div>
+    </article>
+
+    <article class="answer" id="ans-hashing" data-q="Q24" data-m="8M" data-time="18 min">
+      <h4 class="answer-q">What is hashing? Explain hash functions and collision resolution techniques with an example.</h4>
+      <h5>Definition</h5>
+      <p><mark>Hashing</mark> is a technique that maps a key directly to a position in a <mark>hash table</mark> using a <mark>hash function</mark> h(k), so that search, insertion and deletion take <mark>O(1)</mark> time on average.</p>
+      <h5>Hash functions</h5>
+      <ul><li><b>Division</b>: h(k) = k mod m (m prime). 72 mod 10 = 2.</li><li><b>Mid-square</b>: square k and take the middle digits.</li><li><b>Folding</b>: split k into parts and add them (123456 → 123 + 456 = 579).</li><li><b>Multiplication</b>: h(k) = ⌊m(kA mod 1)⌋, 0 &lt; A &lt; 1.</li></ul>
+      <h5>Collision</h5>
+      <p>A <mark>collision</mark> occurs when two keys hash to the same index (72 and 92 both give 2 for m = 10).</p>
+      <h5>Collision resolution techniques</h5>
+      <ol>
+        <li><b>Separate chaining (open hashing)</b>: each slot stores a linked list of all keys that hash to it.</li>
+        <li><b>Open addressing (closed hashing)</b>: find another empty slot by probing:
+          <ul><li>Linear probing: (h(k) + i) mod m</li><li>Quadratic probing: (h(k) + i²) mod m</li><li>Double hashing: (h1(k) + i·h2(k)) mod m</li></ul></li>
+      </ol>
+      <h5>Example: 72, 27, 36, 24, 63, 81, 92, 101 with m = 10, linear probing</h5>
+      <div data-trace="hash" data-keys="72 27 36 24 63 81 92 101" data-m="10" data-method="linear"></div>
+      <div class="full-only stack">
+        <h5>Same keys with chaining</h5>
+        <div data-trace="hash" data-keys="72 27 36 24 63 81 92 101" data-m="10" data-method="chaining"></div>
+        <h5>Load factor and clustering</h5>
+        <p>Load factor α = n/m (here 8/10 = 0.8). Linear probing suffers <b>primary clustering</b>; quadratic probing reduces it but has <b>secondary clustering</b>; double hashing avoids both. When α grows too high, <b>rehash</b> into a larger table.</p>
+      </div>
+    </article>
+
+    <article class="answer" id="ans-spanning" data-q="Q24" data-m="8M" data-time="14 min">
+      <h4 class="answer-q">What is a spanning tree? What is a minimum spanning tree? State the properties and applications.</h4>
+      <h5>Definition</h5>
+      <p>A <mark>spanning tree</mark> of a connected undirected graph G is a subgraph that <mark>includes all the vertices</mark> of G, is <mark>connected</mark>, and contains <mark>no cycle</mark>. It has exactly <b>n − 1 edges</b> for n vertices.</p>
+      <div class="grid-2">
+        <figure class="fig"><div class="fig-box" data-fig="graph" data-graph="span"></div><figcaption class="cap">Graph G (5 edges)</figcaption></figure>
+        <figure class="fig"><div class="fig-box" data-fig="graph" data-graph="span" data-mst="kruskal"></div><figcaption class="cap">Minimum spanning tree: AC, CD, AB, cost 6</figcaption></figure>
+      </div>
+      <h5>Properties</h5>
+      <ul><li>Contains all n vertices and exactly n − 1 edges.</li><li>Has no cycles; adding one edge creates a cycle.</li><li>Removing one edge disconnects it (minimally connected).</li><li>A connected graph can have many spanning trees; a complete graph Kₙ has <b>n<sup>n−2</sup></b> (Cayley’s formula).</li></ul>
+      <h5>Minimum spanning tree</h5>
+      <p>For a weighted graph, the <mark>MST</mark> is the spanning tree with the <mark>minimum total edge weight</mark>. It is found using <b>Prim’s</b> or <b>Kruskal’s</b> algorithm.</p>
+      <h5>Applications</h5>
+      <p>Designing networks (cable, telephone, electrical, roads) at minimum cost, network routing without loops, clustering, approximating the travelling salesman problem.</p>
+    </article>
+  </section>
+
+  <!-- ===================================== Q25 ===================================== -->
+  <section class="lesson" id="answers-q25" data-title="Q25 answers">
+    <div class="lesson-head"><p class="eyebrow">Q25 · 8 marks each</p><h2>Graphs</h2></div>
+
+    <article class="answer" id="ans-graph-repr" data-q="Q25" data-m="8M" data-time="16 min">
+      <h4 class="answer-q">Define a graph. Explain the adjacency matrix and adjacency list representations with an example and compare them.</h4>
+      <h5>Definition</h5>
+      <p>A <mark>graph</mark> G = (V, E) consists of a set of <mark>vertices</mark> V and a set of <mark>edges</mark> E, where each edge connects a pair of vertices. Graphs may be directed or undirected, weighted or unweighted.</p>
+      <div class="fig-box" data-fig="graph" data-graph="small"></div>
+      <h5>Adjacency matrix</h5>
+      <p>A V × V matrix where M[i][j] = 1 if there is an edge between i and j, else 0. Symmetric for undirected graphs.</p>
+      <div class="table-wrap"><table class="t compact" style="width:auto"><thead><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr></thead><tbody>
+        <tr><th>A</th><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td></tr>
+        <tr><th>B</th><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+        <tr><th>C</th><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+        <tr><th>D</th><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+        <tr><th>E</th><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td></tr></tbody></table></div>
+      <h5>Adjacency list</h5>
+      <p>An array of linked lists; list i contains the neighbours of vertex i.</p>
+      <div class="formula">A → B → C → NULL
+B → A → D → NULL
+C → A → D → NULL
+D → B → C → E → NULL
+E → D → NULL</div>
+      <h5>Comparison</h5>
+      <div class="table-wrap"><table class="t compact"><thead><tr><th>Adjacency matrix</th><th>Adjacency list</th></tr></thead><tbody>
+        <tr><td>Space O(V²)</td><td>Space O(V + E)</td></tr>
+        <tr><td>Edge check O(1)</td><td>Edge check O(degree)</td></tr>
+        <tr><td>Good for dense graphs</td><td>Good for sparse graphs</td></tr>
+        <tr><td>Simple to implement</td><td>Saves memory</td></tr></tbody></table></div>
+      <div class="full-only stack">
+        <h5>Terminology</h5>
+        <p>Degree (deg(D) = 3), path (A–B–D–E), cycle (A–B–D–C–A), connected graph, complete graph (n(n−1)/2 edges), weighted graph, directed graph with in-degree and out-degree.</p>
+      </div>
+    </article>
+
+    <article class="answer" id="ans-bfs-dfs" data-q="Q25" data-m="8M" data-time="18 min">
+      <h4 class="answer-q">Explain BFS and DFS graph traversals with algorithms and an example. Compare them.</h4>
+      <h5>Breadth-first search (BFS)</h5>
+      <p>BFS visits all vertices <mark>level by level</mark>, visiting all neighbours of a vertex before going deeper. It uses a <mark>queue</mark>.</p>
+      <ol class="steps"><li>Mark start as visited and enqueue it.</li><li>While the queue is not empty: dequeue u and print it.</li><li>For each unvisited neighbour v of u: mark v visited and enqueue it.</li></ol>
+      <h5>Depth-first search (DFS)</h5>
+      <p>DFS goes <mark>as deep as possible</mark> along a path before <mark>backtracking</mark>. It uses a <mark>stack</mark> (or recursion).</p>
+      <ol class="steps"><li>DFS(u): mark u visited and print it.</li><li>For each unvisited neighbour v of u: call DFS(v).</li><li>When no unvisited neighbour is left, backtrack.</li></ol>
+      <h5>Example graph (neighbours in alphabetical order, start A)</h5>
+      <div class="fig-box" data-fig="graph" data-graph="trav"></div>
+      <div class="full-only stack">
+        <div data-trace="graphwalk" data-kind="bfs" data-graph="trav" data-start="A"></div>
+        <div data-trace="graphwalk" data-kind="dfs" data-graph="trav" data-start="A"></div>
+      </div>
+      <p><b>BFS</b>: A B C D E F G &nbsp;·&nbsp; <b>DFS</b>: A B E C F D G</p>
+      <h5>Comparison</h5>
+      <div class="table-wrap"><table class="t compact"><thead><tr><th>BFS</th><th>DFS</th></tr></thead><tbody>
+        <tr><td>Queue</td><td>Stack / recursion</td></tr><tr><td>Level by level</td><td>Depth first, backtracking</td></tr>
+        <tr><td>Shortest path in unweighted graphs</td><td>Cycle detection, topological sort</td></tr>
+        <tr><td colspan="2" class="c">Both O(V + E) with adjacency lists</td></tr></tbody></table></div>
+    </article>
+
+    <article class="answer" id="ans-prim" data-q="Q25" data-m="8M" data-time="17 min">
+      <h4 class="answer-q">Explain Prim’s algorithm to find a minimum spanning tree with an example.</h4>
+      <h5>Introduction</h5>
+      <p>A <mark>minimum spanning tree</mark> connects all vertices with the minimum total weight. <mark>Prim’s algorithm</mark> is a <mark>greedy</mark> algorithm that grows the MST from a starting vertex, one edge at a time.</p>
+      <h5>Algorithm</h5>
+      <ol class="steps"><li>Select any vertex as the start and include it in the MST.</li><li>Among all edges with one end in the MST and the other outside, choose the edge of <b>minimum weight</b>.</li><li>Add the edge and its new vertex to the MST.</li><li>Repeat until all V vertices are included (V − 1 edges).</li></ol>
+      <h5>Example</h5>
+      <div class="fig-box" data-fig="graph" data-graph="mst"></div>
+      <div data-trace="prim" data-graph="mst" data-start="A"></div>
+      <div class="fig-box" data-fig="graph" data-graph="mst" data-mst="prim"></div>
+      <p>MST edges: A–C (2), C–B (1), B–D (5), D–E (3), D–F (6). <b>Minimum cost = 17.</b></p>
+      <div class="full-only stack"><h5>Complexity</h5><p>O(V²) using an adjacency matrix; O(E log V) using a min-heap. Suitable for dense graphs.</p></div>
+    </article>
+
+    <article class="answer" id="ans-kruskal" data-q="Q25" data-m="8M" data-time="17 min">
+      <h4 class="answer-q">Explain Kruskal’s algorithm with an example. Compare Prim’s and Kruskal’s algorithms.</h4>
+      <h5>Introduction</h5>
+      <p><mark>Kruskal’s algorithm</mark> is a <mark>greedy</mark> algorithm that builds the MST by adding edges in <mark>increasing order of weight</mark>, skipping any edge that would <mark>form a cycle</mark>.</p>
+      <h5>Algorithm</h5>
+      <ol class="steps"><li>Sort all edges in increasing order of weight.</li><li>Make each vertex a separate set.</li><li>For each edge (u, v) in sorted order: if u and v are in different sets, include the edge and merge the sets (union); otherwise reject it (cycle).</li><li>Stop when V − 1 edges have been included.</li></ol>
+      <h5>Example (same graph)</h5>
+      <div class="fig-box full-only" data-fig="graph" data-graph="mst"></div>
+      <div data-trace="kruskal" data-graph="mst"></div>
+      <p>Accepted: B–C (1), A–C (2), D–E (3), B–D (5), D–F (6). Rejected: A–B (4), forms the cycle A–B–C. <b>Minimum cost = 17.</b></p>
+      <h5>Prim vs Kruskal</h5>
+      <div class="table-wrap"><table class="t compact"><thead><tr><th>Prim’s</th><th>Kruskal’s</th></tr></thead><tbody>
+        <tr><td>Starts from a vertex</td><td>Starts from the sorted edge list</td></tr>
+        <tr><td>Grows a single tree</td><td>Joins a forest of trees</td></tr>
+        <tr><td>Cheapest edge leaving the tree</td><td>Cheapest edge overall without a cycle</td></tr>
+        <tr><td>Better for dense graphs, O(V²)</td><td>Better for sparse graphs, O(E log E)</td></tr></tbody></table></div>
+    </article>
+  </section>
+
+  <!-- ===================================== 15M ===================================== -->
+  <section class="lesson" id="ans-long" data-title="15M answers">
+    <div class="lesson-head"><p class="eyebrow">Q26, Q27 · 15 marks each</p><h2>Long answers (15 marks)</h2></div>
+    <p class="section-intro">A 15-mark answer is an 8-mark answer with <b>more parts</b>: every type, every operation, a complete worked example and a comparison. Spend about 30–35 minutes and 4–5 pages on each.</p>
+
+    <article class="answer" id="ans-l-scenario" data-q="Q26" data-m="15M" data-time="30 min">
+      <h4 class="answer-q">Scenario: a college library wants software to (a) store details of every student, (b) find a book instantly by its ID, (c) keep a waiting list for a popular book, (d) let the librarian undo the last action, and (e) connect its 6 branch buildings with the least cable. Suggest suitable data structures with justification.</h4>
+      <h5>Approach</h5>
+      <p>For each requirement, identify the operation needed, then choose the data structure that performs it best.</p>
+      <div class="table-wrap"><table class="t"><thead><tr><th>Need</th><th>Data structure</th><th>Why</th></tr></thead><tbody>
+        <tr><td>(a) Student details: roll no, name, branch, books issued</td><td><mark>Structure</mark> + <mark>dynamic memory</mark> (array of structures via malloc, or a linked list)</td><td>A structure groups different data types into one record; malloc allocates exactly as many records as there are students.</td></tr>
+        <tr><td>(b) Find a book by ID</td><td><mark>Hash table</mark></td><td>h(ID) = ID mod m gives the slot directly: O(1) average search. Collisions handled by chaining.</td></tr>
+        <tr><td>(c) Waiting list for a book</td><td><mark>Queue</mark> (circular queue)</td><td>First come, first served (FIFO); circular array reuses space.</td></tr>
+        <tr><td>(d) Undo last action</td><td><mark>Stack</mark></td><td>The most recent action is undone first (LIFO); push each action, pop to undo.</td></tr>
+        <tr><td>(e) Connect 6 buildings with least cable</td><td><mark>Weighted graph</mark> + <mark>MST</mark> (Prim’s/Kruskal’s)</td><td>Buildings = vertices, cable costs = edge weights; the MST connects all with minimum total cost using 5 cables.</td></tr></tbody></table></div>
+      <h5>(a) Student record</h5>
+      <div class="formula">struct student { int roll; char name[30]; char branch[10]; int issued; };
+struct student *s = (struct student *) malloc(n * sizeof(struct student));</div>
+      <h5>(b) Hash table for books</h5>
+      <div data-trace="hash" data-keys="1012 1045 1023 1032 1055 1062" data-m="10" data-method="chaining"></div>
+      <h5>(c) Waiting queue</h5>
+      <div data-fig="queue" data-size="5" data-vals="S12 S07 S31 _ _" data-front="0" data-rear="2"></div>
+      <p>enqueue(student) when they request; dequeue() when the book is returned.</p>
+      <h5>(d) Undo stack</h5>
+      <div data-fig="stack" data-vals="issue#1 return#4 issue#7" data-max="5"></div>
+      <p>Each action is pushed; “undo” pops the top action (issue#7) and reverses it.</p>
+      <h5>(e) Cable network</h5>
+      <div class="fig-box" data-fig="graph" data-graph="mst" data-mst="kruskal"></div>
+      <p>Using Kruskal’s algorithm the minimum total cable cost is 17 units (edges BC, AC, DE, BD, DF).</p>
+      <h5>Rejected alternatives</h5>
+      <p>A plain array for books would need O(n) linear search; a stack for the waiting list would serve the latest student first, which is unfair; connecting every pair of buildings wastes cable.</p>
+      <h5>Conclusion</h5>
+      <p>Matching each operation to the right data structure gives O(1) lookups, fair waiting, instant undo and minimum-cost connectivity.</p>
+    </article>
+
+    <article class="answer" id="ans-l-basics" data-q="Q26" data-m="15M" data-time="30 min">
+      <h4 class="answer-q">Explain structures and dynamic memory allocation. Write a program to read and display the details of N students using structures and malloc().</h4>
+      <h5>1. Structures</h5>
+      <p>A <mark>structure</mark> is a user-defined data type that groups related variables of different types under one name. Members are accessed with the dot operator (variable) or the arrow operator (pointer).</p>
+      <div class="formula">struct student { int roll; char name[20]; float marks; };</div>
+      <h5>2. Dynamic memory allocation</h5>
+      <p>Memory is allocated at run time from the heap using <b>malloc, calloc, realloc</b> and released with <b>free</b>, all declared in &lt;stdlib.h&gt;.</p>
+      <div class="table-wrap"><table class="t compact"><thead><tr><th>Function</th><th>Syntax</th><th>Purpose</th></tr></thead><tbody>
+        <tr><td>malloc</td><td class="mono">ptr = (type*) malloc(size)</td><td>One block, garbage values</td></tr>
+        <tr><td>calloc</td><td class="mono">ptr = (type*) calloc(n, size)</td><td>n blocks, zero-initialised</td></tr>
+        <tr><td>realloc</td><td class="mono">ptr = realloc(ptr, newsize)</td><td>Resize a block</td></tr>
+        <tr><td>free</td><td class="mono">free(ptr)</td><td>Release memory</td></tr></tbody></table></div>
+      <h5>3. Algorithm</h5>
+      <ol class="steps"><li>Declare struct student.</li><li>Read N.</li><li>Allocate N records: s = malloc(N × sizeof(struct student)); if s is NULL, stop.</li><li>For i = 0 to N − 1, read roll, name, marks into (s + i).</li><li>For i = 0 to N − 1, display the record.</li><li>free(s).</li></ol>
+      <h5>4. Program</h5>
+      <script type="text/plain" data-code="c" data-title="Student records with structures and malloc">
+#include <stdio.h>
+#include <stdlib.h>
+
+struct student {
+    int roll;
+    char name[20];
+    float marks;
+};
+
+int main() {
+    int n, i;
+    struct student *s;
+    printf("Enter number of students: ");
+    scanf("%d", &n);
+    s = (struct student *) malloc(n * sizeof(struct student));   //? Memory for exactly n records.
+    if (s == NULL) {
+        printf("Memory not available\n");
+        return 1;
+    }
+    for (i = 0; i < n; i++) {
+        printf("Enter roll, name, marks of student %d: ", i + 1);
+        scanf("%d %s %f", &(s + i)->roll, (s + i)->name, &(s + i)->marks);   //? (s + i) points to the i-th record.
+    }
+    printf("\nRoll\tName\tMarks\n");
+    for (i = 0; i < n; i++)
+        printf("%d\t%s\t%.2f\n", s[i].roll, s[i].name, s[i].marks);           //? s[i] is the same record.
+    free(s);                                                                 //? Release the memory.
+    return 0;
+}
+</script>
+      <h5>5. Sample output</h5>
+      <div class="formula">Enter number of students: 2
+Enter roll, name, marks of student 1: 101 Asha 88.5
+Enter roll, name, marks of student 2: 102 Ravi 76
+Roll  Name  Marks
+101   Asha  88.50
+102   Ravi  76.00</div>
+      <h5>6. Advantages of this approach</h5>
+      <p>Memory is allocated for exactly N students (no waste), records keep related data together, and realloc can grow the list if more students join.</p>
+      <h5>7. Time and space complexity</h5>
+      <p>Reading and displaying take O(N) time; memory used is O(N).</p>
+    </article>
+
+    <article class="answer" id="ans-l-ll" data-q="Q26" data-m="15M" data-time="35 min">
+      <h4 class="answer-q">Explain linked lists in detail: types, representation and all operations on a singly linked list, with advantages and applications.</h4>
+      <h5>1. Introduction</h5>
+      <p>A <mark>linked list</mark> is a <mark>linear, dynamic</mark> collection of <mark>nodes</mark> where each node stores data and a pointer to the next node. Unlike arrays, nodes need not be contiguous; memory is allocated with malloc as needed.</p>
+      <h5>2. Types</h5>
+      <p><b>Singly linked list</b></p><div class="fig-box" data-fig="ll" data-mode="sll" data-vals="10 20 30"></div>
+      <p><b>Doubly linked list</b></p><div class="fig-box" data-fig="ll" data-mode="dll" data-vals="10 20 30"></div>
+      <p><b>Circular linked list</b></p><div class="fig-box" data-fig="ll" data-mode="cll" data-vals="10 20 30"></div>
+      <h5>3. Node structure</h5>
+      <div class="formula">struct node { int data; struct node *next; };   /* SLL */
+struct node { struct node *prev; int data; struct node *next; };   /* DLL */</div>
+      <h5>4. Insertion</h5>
+      <p><b>At beginning</b>: newNode→next = head; head = newNode.</p>
+      <p><b>At end</b>: walk temp to the last node; temp→next = newNode; newNode→next = NULL.</p>
+      <p><b>At position pos</b>: walk temp to node pos − 1; newNode→next = temp→next; temp→next = newNode.</p>
+      <h5>5. Deletion</h5>
+      <p><b>From beginning</b>: temp = head; head = head→next; free(temp).</p>
+      <p><b>From end</b>: walk temp to the second-last node; free(temp→next); temp→next = NULL.</p>
+      <p><b>At position pos</b>: walk temp to node pos − 1; del = temp→next; temp→next = del→next; free(del).</p>
+      <p>In each case check for an empty list (underflow) first.</p>
+      <h5>6. Traversal and search</h5>
+      <p>temp = head; while temp ≠ NULL: process temp→data; temp = temp→next. For search, compare temp→data with the key at each node.</p>
+      <h5>7. Doubly and circular variations</h5>
+      <p>In a DLL also update prev links (e.g. insert at beginning: head→prev = newNode). In a CLL the last node’s next is head, so loops stop when temp returns to head.</p>
+      <h5>8. Comparison with arrays</h5>
+      <div class="table-wrap"><table class="t compact"><thead><tr><th>Array</th><th>Linked list</th></tr></thead><tbody>
+        <tr><td>Fixed size, contiguous</td><td>Dynamic, scattered</td></tr><tr><td>Random access O(1)</td><td>Sequential access O(n)</td></tr><tr><td>Insert/delete O(n) shifting</td><td>Insert/delete O(1) after locating</td></tr></tbody></table></div>
+      <h5>9. Complexity</h5>
+      <p>Insert/delete at beginning O(1); at end or position O(n); search O(n).</p>
+      <h5>10. Applications</h5>
+      <p>Stacks and queues, polynomial addition, adjacency lists, undo/redo (DLL), round-robin scheduling (CLL), hash-table chaining.</p>
+      <p class="small muted">If the question says “write a program”, use the complete program in the optional code box of the <a href="#sll">singly linked list lesson</a>.</p>
+    </article>
+
+    <article class="answer" id="ans-l-stackq" data-q="Q27" data-m="15M" data-time="35 min">
+      <h4 class="answer-q">Explain stacks and queues with their implementations and applications. Convert (A + B) * (C − D) to postfix and explain why a circular queue is preferred.</h4>
+      <h5>1. Stack</h5>
+      <p>A <mark>LIFO</mark> structure with insert/delete at the <b>top</b>. Array implementation with top = −1: PUSH checks overflow (top == MAX − 1), increments top and stores; POP checks underflow (top == −1), returns stack[top] and decrements top.</p>
+      <div data-fig="stack" data-vals="A B C" data-max="5"></div>
+      <h5>2. Applications of stack</h5>
+      <p>Expression conversion and evaluation, balanced parentheses, recursion, undo, browser back, reversing.</p>
+      <h5>3. Infix to postfix: (A + B) * (C − D)</h5>
+      <div data-trace="infix" data-input="(A+B)*(C-D)"></div>
+      <h5>4. Queue</h5>
+      <p>A <mark>FIFO</mark> structure: enqueue at the <b>rear</b>, dequeue from the <b>front</b>. Linear array queue: overflow when rear == MAX − 1, underflow when front == −1 or front &gt; rear.</p>
+      <h5>5. Why a circular queue</h5>
+      <p>In a linear queue, slots freed at the front cannot be reused, so the queue reports full while space remains. A <mark>circular queue</mark> moves rear and front with (i + 1) % SIZE, reusing those slots. Full: (rear + 1) % SIZE == front.</p>
+      <div data-trace="cqueue" data-size="4" data-ops="E1 E2 E3 E4 D D E5 E6 E7"></div>
+      <h5>6. Applications of queue</h5>
+      <p>CPU scheduling, printer spooling, BFS, buffers, call centres.</p>
+      <h5>7. Stack vs queue</h5>
+      <div class="table-wrap"><table class="t compact"><thead><tr><th>Stack</th><th>Queue</th></tr></thead><tbody>
+        <tr><td>LIFO</td><td>FIFO</td></tr><tr><td>One end (top)</td><td>Two ends (front, rear)</td></tr><tr><td>push/pop</td><td>enqueue/dequeue</td></tr><tr><td>Recursion, undo</td><td>Scheduling, BFS</td></tr></tbody></table></div>
+    </article>
+
+    <article class="answer" id="ans-l-avl" data-q="Q26" data-m="15M" data-time="35 min">
+      <h4 class="answer-q">Explain AVL trees with all rotations. Construct an AVL tree by inserting 50, 20, 60, 10, 8, 15, 32, 46, 11, 48.</h4>
+      <h5>1. Definition and need</h5>
+      <p>An <mark>AVL tree</mark> is a self-balancing BST where every node’s <mark>balance factor</mark> (height of left − height of right subtree) is −1, 0 or +1. A plain BST can become skewed (O(n) search); AVL keeps height O(log n).</p>
+      <h5>2. Rotations</h5>
+      <div class="grid-2">
+        <div><b>LL → right rotation</b><div data-trace="avl" data-keys="30 20 10" data-last="2"></div></div>
+        <div><b>RR → left rotation</b><div data-trace="avl" data-keys="10 20 30" data-last="2"></div></div>
+        <div><b>LR → left then right</b><div data-trace="avl" data-keys="30 10 20" data-last="2"></div></div>
+        <div><b>RL → right then left</b><div data-trace="avl" data-keys="10 30 20" data-last="2"></div></div>
+      </div>
+      <h5>3. Insertion algorithm</h5>
+      <ol class="steps"><li>Insert as in a BST.</li><li>Update balance factors on the path back to the root.</li><li>At the first node with BF ±2, identify the case and rotate.</li></ol>
+      <h5>4. Construction</h5>
+      <div data-trace="avl" data-keys="50 20 60 10 8 15 32 46 11 48"></div>
+      <p>Rotations: <b>LL</b> when inserting 8, <b>LR</b> when inserting 15, <b>RR</b> when inserting 48. Final tree (level order): 20 | 10 50 | 8 15 46 60 | 11 32 48.</p>
+      <h5>5. Deletion</h5>
+      <p>Delete as in a BST, then move up and rotate wherever BF becomes ±2 (choose the case using the BF of the child).</p>
+      <h5>6. Complexity and applications</h5>
+      <p>Search, insert and delete are O(log n). Used where frequent lookups are needed: databases in memory, dictionaries, routing tables.</p>
+    </article>
+
+    <article class="answer" id="ans-l-btree" data-q="Q27" data-m="15M" data-time="35 min">
+      <h4 class="answer-q">Explain B-trees. Construct a B-tree of order 5 by inserting C N G A H E K Q M F W L T Z D P R X Y S.</h4>
+      <h5>1. Definition</h5>
+      <p>A <mark>B-tree of order m</mark> is a balanced m-way search tree used for disk-based storage, in which all leaves are on the same level and each node stores multiple sorted keys.</p>
+      <h5>2. Properties (order 5)</h5>
+      <ul><li>Maximum 5 children and 4 keys per node.</li><li>Minimum ⌈5/2⌉ = 3 children (2 keys) for internal non-root nodes.</li><li>Root has at least 2 children unless it is a leaf.</li><li>All leaves at the same level; keys sorted within nodes.</li></ul>
+      <h5>3. Insertion procedure</h5>
+      <p>Insert into the proper leaf. When a node reaches 5 keys, split it: the median (3rd key) moves up, and the remaining keys form two nodes of 2 keys each. Splits can propagate to the root.</p>
+      <h5>4. Construction</h5>
+      <div data-trace="btree" data-order="5" data-keys="C N G A H E K Q M F W L T Z D P R X Y S"></div>
+      <p><b>Final B-tree</b>: root [M]; level 1: [D G] [Q T]; leaves: [A C] [E F] [H K L] [N P] [R S] [W X Y Z].</p>
+      <h5>5. Deletion</h5>
+      <p>Delete from a leaf (swap with predecessor/successor if the key is internal). If a node underflows, borrow from a sibling through the parent, or merge with a sibling.</p>
+      <h5>6. B-tree vs B+ tree</h5>
+      <p>B+ trees keep all data in linked leaves, making range queries faster; internal nodes only guide the search.</p>
+      <h5>7. Applications</h5>
+      <p>Database indexes and file systems; O(log n) search, insert and delete with few disk accesses.</p>
+    </article>
+
+    <article class="answer" id="ans-l-hash" data-q="Q27" data-m="15M" data-time="35 min">
+      <h4 class="answer-q">Explain hashing and all collision resolution techniques. Insert 72, 27, 36, 24, 63, 81, 92, 101 into a table of size 10 using each technique.</h4>
+      <h5>1. Hashing</h5>
+      <p>Hashing maps keys to table positions with a <mark>hash function</mark>, giving O(1) average search. Hash function used: <b>h(k) = k mod 10</b>.</p>
+      <h5>2. Hash functions</h5>
+      <p>Division, mid-square, folding and multiplication (see the 8-mark answer). A good hash function is fast and spreads keys uniformly.</p>
+      <h5>3. Separate chaining</h5>
+      <div data-trace="hash" data-keys="72 27 36 24 63 81 92 101" data-m="10" data-method="chaining"></div>
+      <h5>4. Linear probing</h5>
+      <div data-trace="hash" data-keys="72 27 36 24 63 81 92 101" data-m="10" data-method="linear"></div>
+      <h5>5. Quadratic probing</h5>
+      <div data-trace="hash" data-keys="72 27 36 24 63 81 92 101" data-m="10" data-method="quadratic"></div>
+      <h5>6. Double hashing</h5>
+      <div data-trace="hash" data-keys="72 27 36 24 63 81 92 101" data-m="10" data-method="double"></div>
+      <h5>7. Comparison</h5>
+      <div class="table-wrap"><table class="t compact"><thead><tr><th>Technique</th><th>Probe</th><th>Problem</th></tr></thead><tbody>
+        <tr><td>Chaining</td><td>Linked list at slot</td><td>Extra memory for pointers</td></tr>
+        <tr><td>Linear</td><td>h + i</td><td>Primary clustering</td></tr>
+        <tr><td>Quadratic</td><td>h + i²</td><td>Secondary clustering, may miss slots</td></tr>
+        <tr><td>Double</td><td>h1 + i·h2</td><td>Extra computation, least clustering</td></tr></tbody></table></div>
+      <h5>8. Load factor and rehashing</h5>
+      <p>α = n/m = 0.8 here. When α exceeds about 0.7 for open addressing, rehash all keys into a table about twice as large.</p>
+    </article>
+
+    <article class="answer" id="ans-l-bst" data-q="Q26" data-m="15M" data-time="30 min">
+      <h4 class="answer-q">Explain binary search trees with insertion, deletion and traversals. Construct a BST for 45, 15, 79, 90, 10, 55, 12, 20, 50, then delete 20, 10 and 45.</h4>
+      <h5>1. Definition</h5>
+      <p>A BST is a binary tree where left subtree keys &lt; node &lt; right subtree keys, for every node.</p>
+      <h5>2. Construction</h5>
+      <div data-trace="bst" data-keys="45 15 79 90 10 55 12 20 50"></div>
+      <h5>3. Traversals</h5>
+      <p>Preorder: 45 15 10 12 20 79 55 50 90 · Inorder: 10 12 15 20 45 50 55 79 90 · Postorder: 12 10 20 15 50 55 90 79 45 · Level order: 45 15 79 10 20 55 90 12 50.</p>
+      <h5>4. Search algorithm</h5>
+      <p>Compare the key with the root; go left if smaller, right if larger; stop when equal (found) or NULL (not found).</p>
+      <h5>5. Deletion</h5>
+      <div class="grid-3">
+        <div><b>Delete 20 (leaf)</b><div class="fig-box" data-fig="tree" data-keys="45 15 79 90 10 55 12 20 50" data-del="20"></div></div>
+        <div><b>Delete 10 (one child)</b><div class="fig-box" data-fig="tree" data-keys="45 15 79 90 10 55 12 20 50" data-del="20 10"></div></div>
+        <div><b>Delete 45 (two children → successor 50)</b><div class="fig-box" data-fig="tree" data-keys="45 15 79 90 10 55 12 20 50" data-del="20 10 45"></div></div>
+      </div>
+      <h5>6. Complexity</h5>
+      <p>O(h): O(log n) average, O(n) worst case (skewed). Balanced variants: AVL, red-black trees.</p>
+      <h5>7. Applications</h5>
+      <p>Searching and sorting (inorder gives sorted order), symbol tables, dictionaries, priority-based lookups.</p>
+    </article>
+
+    <article class="answer" id="ans-l-graph" data-q="Q27" data-m="15M" data-time="35 min">
+      <h4 class="answer-q">Explain graphs, their representations and the BFS and DFS traversals with algorithms and a complete example.</h4>
+      <h5>1. Graph and terminology</h5>
+      <p>G = (V, E): vertices and edges; directed/undirected; weighted; degree, path, cycle, connected and complete graphs.</p>
+      <div class="fig-box" data-fig="graph" data-graph="trav"></div>
+      <h5>2. Representations</h5>
+      <p><b>Adjacency matrix</b> (V × V, O(V²) space) and <b>adjacency list</b> (O(V + E) space). Adjacency list for this graph:</p>
+      <div class="formula">A → B → C → D
+B → A → E
+C → A → E → F
+D → A → F
+E → B → C → G
+F → C → D → G
+G → E → F</div>
+      <h5>3. BFS (queue)</h5>
+      <div data-trace="graphwalk" data-kind="bfs" data-graph="trav" data-start="A"></div>
+      <h5>4. DFS (stack / recursion)</h5>
+      <div data-trace="graphwalk" data-kind="dfs" data-graph="trav" data-start="A"></div>
+      <h5>5. Comparison</h5>
+      <div class="table-wrap"><table class="t compact"><thead><tr><th>BFS</th><th>DFS</th></tr></thead><tbody>
+        <tr><td>Queue, level order</td><td>Stack, depth first</td></tr><tr><td>Shortest path (unweighted)</td><td>Cycle detection, topological sort</td></tr><tr><td>O(V + E)</td><td>O(V + E)</td></tr></tbody></table></div>
+      <h5>6. Applications</h5>
+      <p>BFS: GPS, social networks, web crawling, network broadcasting. DFS: maze solving, detecting cycles, connected components, scheduling.</p>
+    </article>
+
+    <article class="answer" id="ans-l-mst" data-q="Q26" data-m="15M" data-time="35 min">
+      <h4 class="answer-q">What is a minimum spanning tree? Find the MST of the given graph using both Prim’s and Kruskal’s algorithms and compare them.</h4>
+      <h5>1. Spanning tree and MST</h5>
+      <p>A spanning tree connects all n vertices with n − 1 edges and no cycles. The <mark>MST</mark> is the spanning tree of minimum total weight.</p>
+      <div class="fig-box" data-fig="graph" data-graph="mst"></div>
+      <h5>2. Prim’s algorithm (start A)</h5>
+      <p>Grow one tree: repeatedly add the cheapest edge leaving the tree.</p>
+      <div data-trace="prim" data-graph="mst" data-start="A"></div>
+      <h5>3. Kruskal’s algorithm</h5>
+      <p>Sort edges; add the cheapest edge that does not form a cycle.</p>
+      <div data-trace="kruskal" data-graph="mst"></div>
+      <h5>4. Resulting MST</h5>
+      <div class="fig-box" data-fig="graph" data-graph="mst" data-mst="kruskal"></div>
+      <p>Edges A–C, B–C, B–D, D–E, D–F. <b>Minimum cost = 2 + 1 + 5 + 3 + 6 = 17.</b> Both algorithms give the same cost.</p>
+      <h5>5. Comparison</h5>
+      <div class="table-wrap"><table class="t compact"><thead><tr><th>Prim’s</th><th>Kruskal’s</th></tr></thead><tbody>
+        <tr><td>Vertex-based, one growing tree</td><td>Edge-based, forest that merges</td></tr><tr><td>O(V²) / O(E log V)</td><td>O(E log E)</td></tr><tr><td>Dense graphs</td><td>Sparse graphs</td></tr></tbody></table></div>
+      <h5>6. Applications</h5>
+      <p>Network design (cables, roads, pipelines), clustering, circuit design.</p>
+    </article>
+  </section>
+</article>

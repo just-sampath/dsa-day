@@ -1,0 +1,183 @@
+/*
+  Layout concept: an exam answer booklet on graph paper. A navigation spine on the left,
+  a ruled reading column in the middle, an "on this page" margin on the right.
+  Highlighter yellow = write this in the exam, pink = examiner's trap, mint = tip.
+*/
+:root {
+  --bg: #f3f5fb;
+  --bg-grid: rgba(43, 85, 230, 0.055);
+  --surface: #ffffff;
+  --surface-2: #eceff8;
+  --surface-3: #e2e7f4;
+  --ink: #161d3a;
+  --ink-2: #454e72;
+  --ink-3: #737ca0;
+  --line: #d9dfee;
+  --line-strong: #bcc5df;
+  --accent: #2650e0;
+  --accent-2: #1b3db5;
+  --accent-ink: #ffffff;
+  --accent-soft: #e2e8fd;
+  --mark-bg: #ffe25e;
+  --mark-ink: #161d3a;
+  --hl-soft: #fff6c6;
+  --hl-line: #f0c419;
+  --pink: #e8457a;
+  --pink-soft: #ffe4ec;
+  --pink-ink: #9a1747;
+  --mint: #19a97a;
+  --mint-soft: #d9f6ea;
+  --mint-ink: #0b6347;
+  --margin-red: #e0484f;
+  --ok: #11925a;
+  --ok-soft: #dcf5e8;
+  --bad: #d63a42;
+  --bad-soft: #fde4e5;
+  --warn: #b9730a;
+  --code-bg: #121a36;
+  --code-fg: #e4e8f6;
+  --code-line: #1d2750;
+  --code-dim: #7d87ad;
+  --syn-kw: #94b4ff;
+  --syn-type: #6fe0c0;
+  --syn-str: #ffd479;
+  --syn-num: #ffaf87;
+  --syn-pre: #d9a8ff;
+  --syn-fn: #ffffff;
+  --viz-node: #ffffff;
+  --viz-node-2: #eef2fd;
+  --viz-stroke: #26306b;
+  --viz-edge: #4b5580;
+  --viz-hl: #ffe25e;
+  --viz-new: #c9f2df;
+  --viz-del: #ffd5df;
+  --viz-visit: #2650e0;
+  --viz-done: #d3ddfb;
+  --viz-visit-ink: #ffffff;
+  --shadow: 0 1px 2px rgba(22, 29, 58, 0.06), 0 6px 20px rgba(22, 29, 58, 0.07);
+  --shadow-lg: 0 18px 50px rgba(22, 29, 58, 0.18);
+
+  --font-display: "Bricolage Grotesque", "Segoe UI Variable Display", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-body: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Atkinson Hyperlegible Mono", ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+
+  --step--1: 0.875rem;
+  --step-0: 1rem;
+  --step-1: 1.15rem;
+  --step-2: 1.4rem;
+  --step-3: 1.8rem;
+  --step-4: clamp(2rem, 1.4rem + 2.6vw, 3rem);
+
+  --radius: 10px;
+  --radius-sm: 6px;
+  --topbar-h: 56px;
+  --chips-h: 48px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --tap: 40px;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1226;
+    --bg-grid: rgba(142, 166, 255, 0.045);
+    --surface: #151b34;
+    --surface-2: #1b2242;
+    --surface-3: #232b50;
+    --ink: #e6e9f6;
+    --ink-2: #b1b8d6;
+    --ink-3: #8189ae;
+    --line: #283055;
+    --line-strong: #3a4472;
+    --accent: #8ea6ff;
+    --accent-2: #b3c3ff;
+    --accent-ink: #0d1226;
+    --accent-soft: #222c5a;
+    --mark-bg: rgba(255, 214, 70, 0.3);
+    --mark-ink: #fff3c2;
+    --hl-soft: #2b2a1e;
+    --hl-line: #c9a52a;
+    --pink: #ff86ab;
+    --pink-soft: #361a2d;
+    --pink-ink: #ffa8c3;
+    --mint: #4fd9a8;
+    --mint-soft: #12332b;
+    --mint-ink: #7fe8c2;
+    --margin-red: #ff6b70;
+    --ok: #4fd9a0;
+    --ok-soft: #113427;
+    --bad: #ff7a80;
+    --bad-soft: #3a1b22;
+    --warn: #f0b45a;
+    --code-bg: #090d1e;
+    --code-fg: #e4e8f6;
+    --code-line: #18204a;
+    --code-dim: #6f79a2;
+    --viz-node: #1c2346;
+    --viz-node-2: #252e5a;
+    --viz-stroke: #a9b8ff;
+    --viz-edge: #8a94c2;
+    --viz-hl: #7a6420;
+    --viz-new: #145240;
+    --viz-del: #5a2236;
+    --viz-visit: #8ea6ff;
+    --viz-done: #33468f;
+    --viz-visit-ink: #0d1226;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.28);
+    --shadow-lg: 0 18px 50px rgba(0, 0, 0, 0.5);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0d1226;
+  --bg-grid: rgba(142, 166, 255, 0.045);
+  --surface: #151b34;
+  --surface-2: #1b2242;
+  --surface-3: #232b50;
+  --ink: #e6e9f6;
+  --ink-2: #b1b8d6;
+  --ink-3: #8189ae;
+  --line: #283055;
+  --line-strong: #3a4472;
+  --accent: #8ea6ff;
+  --accent-2: #b3c3ff;
+  --accent-ink: #0d1226;
+  --accent-soft: #222c5a;
+  --mark-bg: rgba(255, 214, 70, 0.3);
+  --mark-ink: #fff3c2;
+  --hl-soft: #2b2a1e;
+  --hl-line: #c9a52a;
+  --pink: #ff86ab;
+  --pink-soft: #361a2d;
+  --pink-ink: #ffa8c3;
+  --mint: #4fd9a8;
+  --mint-soft: #12332b;
+  --mint-ink: #7fe8c2;
+  --margin-red: #ff6b70;
+  --ok: #4fd9a0;
+  --ok-soft: #113427;
+  --bad: #ff7a80;
+  --bad-soft: #3a1b22;
+  --warn: #f0b45a;
+  --code-bg: #090d1e;
+  --code-fg: #e4e8f6;
+  --code-line: #18204a;
+  --code-dim: #6f79a2;
+  --viz-node: #1c2346;
+  --viz-node-2: #252e5a;
+  --viz-stroke: #a9b8ff;
+  --viz-edge: #8a94c2;
+  --viz-hl: #7a6420;
+  --viz-new: #145240;
+  --viz-del: #5a2236;
+  --viz-visit: #8ea6ff;
+  --viz-done: #33468f;
+  --viz-visit-ink: #0d1226;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.28);
+  --shadow-lg: 0 18px 50px rgba(0, 0, 0, 0.5);
+  color-scheme: dark;
+}
